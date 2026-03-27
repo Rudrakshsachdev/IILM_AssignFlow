@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+.venv/
+env/
+.env/
+myenv/
+
+# Database
+*.db
+*.sqlite3
+
+# Node / React
+node_modules/
+frontend/assignflow/node_modules/
+frontend/assignflow/dist/
+frontend/assignflow/dist-ssr/
+frontend/assignflow/*.local
+
+# Environment Files (Secrets)
+.env
+Backend/.env
+frontend/assignflow/.env
+
+# IDE / Editor
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
