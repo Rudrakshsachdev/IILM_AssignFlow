@@ -1,8 +1,10 @@
 import React from 'react';
-import { BookOpen, Trophy, Calendar, Clock, Paperclip, Edit2, Trash2 } from 'lucide-react';
+import { BookOpen, Trophy, Calendar, Clock, Paperclip, Edit2, Trash2, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import styles from './AssignmentCard.module.css';
 
-const AssignmentCard = ({ assignment, onEdit, onDelete }) => {
+const AssignmentCard = ({ assignment, onEdit, onDelete, isStudentView = false }) => {
+  const navigate = useNavigate();
   const formatDate = (dateStr) => {
     if (!dateStr) return '—';
     return new Date(dateStr).toLocaleDateString('en-IN', {
@@ -17,6 +19,15 @@ const AssignmentCard = ({ assignment, onEdit, onDelete }) => {
   const isDeadlinePassed = new Date(assignment.deadline) < new Date();
 
   const getStatusClass = (status) => {
+    if (isStudentView) {
+      switch (status?.toLowerCase()) {
+        case 'submitted': return styles.statusSubmitted;
+        case 'late': return styles.statusLate;
+        case 'pending': return styles.statusPending;
+        default: return styles.statusPending;
+      }
+    }
+
     switch (status) {
       case 'published': return styles.statusPublished;
       case 'draft': return styles.statusDraft;
@@ -35,8 +46,8 @@ const AssignmentCard = ({ assignment, onEdit, onDelete }) => {
     <div className={`glass-card ${styles.card}`}>
       <div className={styles.cardHeader}>
         <h3 className={styles.cardTitle}>{assignment.title}</h3>
-        <span className={`${styles.statusBadge} ${getStatusClass(assignment.status)}`}>
-          {assignment.status}
+        <span className={`${styles.statusBadge} ${getStatusClass(isStudentView ? assignment.submissionStatus : assignment.status)}`}>
+          {isStudentView ? (assignment.submissionStatus || 'Pending') : assignment.status}
         </span>
       </div>
 
@@ -77,14 +88,26 @@ const AssignmentCard = ({ assignment, onEdit, onDelete }) => {
         </a>
       )}
 
-      <div className={styles.cardActions}>
-        <button className="btn-secondary" onClick={() => onEdit(assignment)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-          <Edit2 size={16} /> Edit
-        </button>
-        <button className="btn-secondary" onClick={handleDelete} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#dc2626', borderColor: '#fecaca' }}>
-          <Trash2 size={16} /> Delete
-        </button>
-      </div>
+      {isStudentView ? (
+        <div className={styles.cardActions}>
+          <button 
+            className="btn-primary" 
+            style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+            onClick={() => navigate(`/student-dashboard/assignment/${assignment.id}`)}
+          >
+            View Details <ArrowRight size={16} />
+          </button>
+        </div>
+      ) : (
+        <div className={styles.cardActions}>
+          <button className="btn-secondary" onClick={() => onEdit(assignment)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            <Edit2 size={16} /> Edit
+          </button>
+          <button className="btn-secondary" onClick={handleDelete} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#dc2626', borderColor: '#fecaca' }}>
+            <Trash2 size={16} /> Delete
+          </button>
+        </div>
+      )}
     </div>
   );
 };

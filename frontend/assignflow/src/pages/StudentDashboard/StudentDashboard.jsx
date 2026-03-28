@@ -1,12 +1,50 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { User, FileText, BarChart2 } from 'lucide-react';
+import { getStudentAssignments } from '../../api/assignment';
+import { getMySubmissions } from '../../api/submission';
 import styles from './StudentDashboard.module.css';
 
 const StudentDashboard = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+
+  const [assignments, setAssignments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const fetchDashboardData = useCallback(async () => {
+    setLoading(true);
+    setErrorMsg('');
+    try {
+      const [assignmentsData, submissionsData] = await Promise.all([
+        getStudentAssignments(),
+        getMySubmissions()
+      ]);
+
+      // Merge submission status into assignments
+      const merged = assignmentsData.map(assignment => {
+        const submission = submissionsData.find(sub => sub.assignment_id === assignment.id);
+        return {
+          ...assignment,
+          submissionStatus: submission ? submission.status : 'Pending'
+        };
+      });
+
+      setAssignments(merged);
+    } catch (err) {
+      if (err.response?.status !== 401 && err.response?.status !== 403) {
+        setErrorMsg('Failed to load dashboard data.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   const handleLogout = () => {
     logout();
@@ -24,23 +62,33 @@ const StudentDashboard = () => {
       </header>
 
       <main className={styles.dashboardMain}>
-        <Link to="/student-dashboard/profile" style={{ textDecoration: 'none' }}>
-          <div className={`glass-card hover-lift ${styles.card}`}>
-            <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><User size={20} color="var(--primary-color)" /> My Profile</h3>
-            <p className="text-muted">View and manage your student profile, upload your photo, and update your details.</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+          <Link to="/student-dashboard/profile" style={{ textDecoration: 'none' }}>
+            <div className={`glass-card hover-lift ${styles.card}`} style={{ height: '100%' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><User size={20} color="var(--primary-color)" /> My Profile</h3>
+              <p className="text-muted">View and manage your student profile, upload your photo, and update your details.</p>
+            </div>
+          </Link>
+          <Link to="/student-dashboard/assignments" style={{ textDecoration: 'none' }}>
+            <div className={`glass-card hover-lift ${styles.card}`} style={{ height: '100%' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><FileText size={20} color="var(--primary-color)" /> My Assignments</h3>
+              {loading ? (
+                <div>
+                  <div className="skeleton-line"></div>
+                  <div className="skeleton-line short" style={{ marginTop: '0.5rem' }}></div>
+                </div>
+              ) : (
+                <>
+                  <p className="text-muted">Total Assignments: {assignments.length}</p>
+                  <p className="text-muted" style={{ color: 'var(--primary-color)', fontWeight: '600' }}>Pending: {assignments.filter(a => a.submissionStatus === 'Pending').length}</p>
+                </>
+              )}
+            </div>
+          </Link>
+          <div className={`glass-card ${styles.card}`}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><BarChart2 size={20} color="var(--primary-color)" /> Recent Grades</h3>
+            <p className="text-muted">No recent grades posted.</p>
           </div>
-        </Link>
-
-        <div className={`glass-card ${styles.card}`}>
-          <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><FileText size={20} color="var(--primary-color)" /> My Assignments</h3>
-          <p className="text-muted">You have no pending assignments at the moment. Enjoy your free time!</p>
-          <div className="skeleton-line" style={{marginTop: '2rem'}}></div>
-          <div className="skeleton-line short"></div>
-        </div>
-
-        <div className={`glass-card ${styles.card}`}>
-          <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><BarChart2 size={20} color="var(--primary-color)" /> Recent Grades</h3>
-          <p className="text-muted">No recent grades posted.</p>
         </div>
       </main>
     </div>

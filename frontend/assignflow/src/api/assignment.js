@@ -33,8 +33,20 @@ export const updateAssignment = async (id, data) => {
 };
 
 export const deleteAssignment = async (id) => {
-  const res = await api.delete(`/assignments/${id}`);
-  return res.data;
+  const response = await api.delete(`/assignments/${id}`);
+  return response.data;
+};
+
+// --- Student Assignment Routes ---
+
+export const getStudentAssignments = async (params = {}) => {
+  const response = await api.get('/assignments/student/available', { params });
+  return response.data;
+};
+
+export const getStudentAssignmentById = async (id) => {
+  const response = await api.get(`/assignments/student/${id}`);
+  return response.data;
 };
 
 export const uploadAssignmentFile = async (file) => {

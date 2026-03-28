@@ -17,13 +17,15 @@ from app.services.assignment_service import (
     get_assignment_by_id,
     update_assignment,
     delete_assignment,
+    get_student_assignments,
+    get_student_assignment_by_id,
 )
 from app.utils.cloudinary import upload_assignment_file
 
 router = APIRouter()
 
-# Only faculty can access assignment management
 allow_faculty = RoleChecker(["faculty"])
+allow_student = RoleChecker(["student"])
 
 
 @router.post("/", response_model=AssignmentResponse, status_code=status.HTTP_201_CREATED)
@@ -124,3 +126,32 @@ def upload_file(
         return {"file_url": url, "file_name": file.filename}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/student/available", response_model=List[AssignmentResponse])
+def get_all_student(
+    subject: Optional[str] = Query(None, description="Filter by subject"),
+    sort_by: Optional[str] = Query("deadline", description="Sort by: deadline, created_at, title"),
+    sort_order: Optional[str] = Query("asc", description="Sort order: asc or desc"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(allow_student),
+):
+    """Get all published assignments globally for students."""
+    assignments = get_student_assignments(
+        db=db,
+        subject=subject,
+        sort_by=sort_by,
+        sort_order=sort_order,
+    )
+    return assignments
+
+
+@router.get("/student/{assignment_id}", response_model=AssignmentResponse)
+def get_one_student(
+    assignment_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(allow_student),
+):
+    """Get a single assignment by ID globally for students."""
+    assignment = get_student_assignment_by_id(db=db, assignment_id=assignment_id)
+    return assignment

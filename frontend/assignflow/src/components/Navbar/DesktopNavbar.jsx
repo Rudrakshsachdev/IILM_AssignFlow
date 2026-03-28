@@ -15,7 +15,7 @@ const DesktopNavbar = () => {
 
   const dashboardPath = user?.role === 'student' ? '/student-dashboard' : (user?.role === 'faculty' ? '/faculty-dashboard' : (user?.role === 'admin' ? '/admin-dashboard' : '/'));
   const profilePath = user?.role === 'student' ? '/student-dashboard/profile' : '/faculty-dashboard/profile';
-  const assignmentsPath = user?.role === 'faculty' ? '/faculty-dashboard/create-assignment' : null;
+  const assignmentsPath = user?.role === 'faculty' ? '/faculty-dashboard/create-assignment' : (user?.role === 'student' ? '/student-dashboard/assignments' : null);
 
   return (
     <nav className={styles.navbar}>

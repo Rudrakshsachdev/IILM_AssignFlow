@@ -98,3 +98,48 @@ def delete_assignment(db: Session, assignment_id: int, faculty_id: int) -> None:
 
     db.delete(assignment)
     db.commit()
+
+
+def get_student_assignments(
+    db: Session,
+    subject: str = None,
+    sort_by: str = "deadline",
+    sort_order: str = "asc",
+) -> list[Assignment]:
+    """Get all published assignments for students."""
+    query = db.query(Assignment).filter(Assignment.status == "published")
+
+    if subject:
+        query = query.filter(Assignment.subject.ilike(f"%{subject}%"))
+
+    if sort_by == "deadline":
+        order_col = Assignment.deadline
+    elif sort_by == "created_at":
+        order_col = Assignment.created_at
+    elif sort_by == "title":
+        order_col = Assignment.title
+    else:
+        order_col = Assignment.deadline
+
+    if sort_order == "desc":
+        query = query.order_by(order_col.desc())
+    else:
+        query = query.order_by(order_col.asc())
+
+    return query.all()
+
+
+def get_student_assignment_by_id(db: Session, assignment_id: int) -> Assignment:
+    """Get a single published assignment by ID for a student view."""
+    assignment = db.query(Assignment).filter(
+        Assignment.id == assignment_id, 
+        Assignment.status == "published"
+    ).first()
+
+    if not assignment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Assignment not found or not published yet."
+        )
+
+    return assignment

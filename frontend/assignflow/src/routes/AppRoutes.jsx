@@ -9,9 +9,11 @@ import AdminDashboard from '../pages/AdminDashboard/AdminDashboard';
 import Unauthorized from '../pages/Unauthorized/Unauthorized';
 import Profile from '../pages/Profile/Profile';
 import FacultyProfile from '../pages/Profile/FacultyProfile';
-import ForgotPassword from '../pages/Auth/ForgotPassword';
 import ResetPassword from '../pages/Auth/ResetPassword';
 import CreateAssignment from '../pages/FacultyDashboard/CreateAssignment';
+import AssignmentDetails from '../pages/StudentDashboard/AssignmentDetails';
+import StudentAssignments from '../pages/StudentDashboard/StudentAssignments';
+import ForgotPassword from '../pages/Auth/ForgotPassword';
 
 const AppRoutes = () => {
 
@@ -32,6 +34,24 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={['student']}>
             <StudentDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/student-dashboard/assignments"
+        element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <StudentAssignments />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/student-dashboard/assignment/:id"
+        element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <AssignmentDetails />
           </ProtectedRoute>
         }
       />

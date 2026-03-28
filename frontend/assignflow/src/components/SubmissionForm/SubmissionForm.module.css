@@ -1,0 +1,95 @@
+.submissionForm {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.submissionForm h3 {
+  color: var(--secondary-color);
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.submissionForm > p {
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fileUploadArea {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  background-color: #f8fafc;
+}
+
+.fileUploadArea:hover {
+  border-color: var(--primary-color);
+  background: rgba(129, 32, 44, 0.02);
+}
+
+.fileUploadArea.hasFile {
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.04);
+}
+
+.fileUploadIcon {
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: center;
+}
+
+.fileUploadText {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.fileUploadText strong {
+  color: var(--primary-color);
+}
+
+.fileName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #16a34a;
+  margin-top: 0.5rem;
+  word-break: break-all;
+}
+
+.uploadingText {
+  font-size: 0.9rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.errorText {
+  color: #dc2626;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
