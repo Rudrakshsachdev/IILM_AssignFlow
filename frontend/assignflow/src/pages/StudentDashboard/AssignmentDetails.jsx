@@ -122,8 +122,13 @@ const AssignmentDetails = () => {
           <div className={`glass-card ${styles.detailsCard}`}>
             <div className={styles.header}>
               <div className={styles.badgeLabel}>
-                <BookOpen size={16} /> {assignment.subject}
+                <BookOpen size={16} /> {assignment.subject_name || assignment.subject}
               </div>
+              {assignment.section_label && (
+                <div className={styles.badgeLabel} style={{ marginLeft: '0.5rem', background: 'var(--secondary-color)', color: '#fff' }}>
+                  {assignment.section_label}
+                </div>
+              )}
               <h1 className={styles.title}>{assignment.title}</h1>
               
               <div className={styles.metaInfo}>

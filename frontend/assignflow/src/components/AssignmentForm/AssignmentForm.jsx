@@ -1,12 +1,15 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Edit3, PlusSquare, Loader2, CheckCircle, UploadCloud } from 'lucide-react';
 import { uploadAssignmentFile } from '../../api/assignment';
+import { getMyMappings } from '../../api/academic';
 import styles from './AssignmentForm.module.css';
 
 const INITIAL_FORM = {
   title: '',
   description: '',
   subject: '',
+  subject_id: '',
+  section_id: '',
   deadline: '',
   max_marks: '',
   file_url: '',
@@ -23,6 +26,8 @@ const AssignmentForm = ({ existingData, onSubmit, onCancel, isLoading, inline = 
         title: existingData.title || '',
         description: existingData.description || '',
         subject: existingData.subject || '',
+        subject_id: existingData.subject_id || '',
+        section_id: existingData.section_id || '',
         deadline: existingData.deadline
           ? new Date(existingData.deadline).toISOString().slice(0, 16)
           : '',
@@ -39,11 +44,40 @@ const AssignmentForm = ({ existingData, onSubmit, onCancel, isLoading, inline = 
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
+  const [mappings, setMappings] = useState([]);
+  const [mappingsLoading, setMappingsLoading] = useState(true);
+
+  // Fetch faculty mappings on mount
+  useEffect(() => {
+    const fetchMappings = async () => {
+      try {
+        const data = await getMyMappings();
+        setMappings(data);
+      } catch (err) {
+        console.error('Failed to load faculty mappings:', err);
+      } finally {
+        setMappingsLoading(false);
+      }
+    };
+    fetchMappings();
+  }, []);
+
+  // Derive unique subjects and available sections from mappings
+  const uniqueSubjects = [...new Map(mappings.map(m => [m.subject_id, { id: m.subject_id, name: m.subject_name }])).values()];
+  const availableSections = formData.subject_id
+    ? mappings.filter(m => m.subject_id === parseInt(formData.subject_id)).map(m => ({ id: m.section_id, label: m.section_label }))
+    : [];
 
   const validate = () => {
     const newErrors = {};
     if (!formData.title.trim()) newErrors.title = 'Title is required';
-    if (!formData.subject.trim()) newErrors.subject = 'Subject is required';
+    // If mappings exist, validate via dropdowns; otherwise keep free-text
+    if (mappings.length > 0) {
+      if (!formData.subject_id) newErrors.subject = 'Subject is required';
+      if (!formData.section_id) newErrors.section = 'Section is required';
+    } else {
+      if (!formData.subject.trim()) newErrors.subject = 'Subject is required';
+    }
     if (!formData.deadline) newErrors.deadline = 'Deadline is required';
     if (!formData.max_marks || formData.max_marks < 1) newErrors.max_marks = 'Enter valid marks (≥ 1)';
     setErrors(newErrors);
@@ -52,7 +86,16 @@ const AssignmentForm = ({ existingData, onSubmit, onCancel, isLoading, inline = 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: value };
+      // When subject changes via dropdown, auto-set the subject string and reset section
+      if (name === 'subject_id') {
+        const match = uniqueSubjects.find(s => s.id === parseInt(value));
+        updated.subject = match ? match.name : '';
+        updated.section_id = ''; // reset section on subject change
+      }
+      return updated;
+    });
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
@@ -115,11 +158,15 @@ const AssignmentForm = ({ existingData, onSubmit, onCancel, isLoading, inline = 
       ...formData,
       max_marks: parseInt(formData.max_marks, 10),
       deadline: new Date(formData.deadline).toISOString(),
+      subject_id: formData.subject_id ? parseInt(formData.subject_id, 10) : null,
+      section_id: formData.section_id ? parseInt(formData.section_id, 10) : null,
     };
 
     // Remove empty optional fields
     if (!payload.description) delete payload.description;
     if (!payload.file_url) delete payload.file_url;
+    if (!payload.subject_id) delete payload.subject_id;
+    if (!payload.section_id) delete payload.section_id;
 
     onSubmit(payload);
   };
@@ -158,13 +205,28 @@ const AssignmentForm = ({ existingData, onSubmit, onCancel, isLoading, inline = 
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
               <label>Subject *</label>
-              <input
-                type="text"
-                name="subject"
-                value={formData.subject}
-                onChange={handleChange}
-                placeholder="e.g. Computer Science"
-              />
+              {mappingsLoading ? (
+                <div className="skeleton-line" style={{ height: '42px' }}></div>
+              ) : mappings.length > 0 ? (
+                <select
+                  name="subject_id"
+                  value={formData.subject_id}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Subject</option>
+                  {uniqueSubjects.map(s => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  placeholder="e.g. Computer Science"
+                />
+              )}
               {errors.subject && <span className={styles.errorText}>{errors.subject}</span>}
             </div>
             <div className={styles.formGroup}>
@@ -181,6 +243,25 @@ const AssignmentForm = ({ existingData, onSubmit, onCancel, isLoading, inline = 
               {errors.max_marks && <span className={styles.errorText}>{errors.max_marks}</span>}
             </div>
           </div>
+
+          {/* Section dropdown (only if mappings exist) */}
+          {mappings.length > 0 && (
+            <div className={styles.formGroup}>
+              <label>Section *</label>
+              <select
+                name="section_id"
+                value={formData.section_id}
+                onChange={handleChange}
+                disabled={!formData.subject_id}
+              >
+                <option value="">{formData.subject_id ? 'Select Section' : 'Select a subject first'}</option>
+                {availableSections.map(s => (
+                  <option key={s.id} value={s.id}>{s.label}</option>
+                ))}
+              </select>
+              {errors.section && <span className={styles.errorText}>{errors.section}</span>}
+            </div>
+          )}
 
           <div className={styles.formRow}>
             <div className={styles.formGroup}>

@@ -19,8 +19,10 @@ from app.services.assignment_service import (
     delete_assignment,
     get_student_assignments,
     get_student_assignment_by_id,
+    enrich_assignment_response,
 )
 from app.utils.cloudinary import upload_assignment_file
+from app.models.students import Student
 
 router = APIRouter()
 
@@ -36,7 +38,7 @@ def create(
 ):
     """Create a new assignment."""
     assignment = create_assignment(db=db, faculty_id=current_user.id, data=data)
-    return assignment
+    return enrich_assignment_response(db, assignment)
 
 
 @router.get("/", response_model=List[AssignmentResponse])
@@ -57,7 +59,7 @@ def get_all(
         sort_by=sort_by,
         sort_order=sort_order,
     )
-    return assignments
+    return [enrich_assignment_response(db, a) for a in assignments]
 
 
 @router.get("/{assignment_id}", response_model=AssignmentResponse)
@@ -68,7 +70,7 @@ def get_one(
 ):
     """Get a single assignment by ID."""
     assignment = get_assignment_by_id(db=db, assignment_id=assignment_id, faculty_id=current_user.id)
-    return assignment
+    return enrich_assignment_response(db, assignment)
 
 
 @router.put("/{assignment_id}", response_model=AssignmentResponse)
@@ -80,7 +82,7 @@ def update(
 ):
     """Update an assignment."""
     assignment = update_assignment(db=db, assignment_id=assignment_id, faculty_id=current_user.id, data=data)
-    return assignment
+    return enrich_assignment_response(db, assignment)
 
 
 @router.delete("/{assignment_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -136,14 +138,19 @@ def get_all_student(
     db: Session = Depends(get_db),
     current_user: User = Depends(allow_student),
 ):
-    """Get all published assignments globally for students."""
+    """Get all published assignments for students, filtered by their section."""
+    # Look up the student's section_id from their profile
+    student_profile = db.query(Student).filter(Student.user_id == current_user.id).first()
+    student_section_id = student_profile.section_id if student_profile else None
+
     assignments = get_student_assignments(
         db=db,
         subject=subject,
         sort_by=sort_by,
         sort_order=sort_order,
+        section_id=student_section_id,
     )
-    return assignments
+    return [enrich_assignment_response(db, a) for a in assignments]
 
 
 @router.get("/student/{assignment_id}", response_model=AssignmentResponse)
@@ -152,6 +159,6 @@ def get_one_student(
     db: Session = Depends(get_db),
     current_user: User = Depends(allow_student),
 ):
-    """Get a single assignment by ID globally for students."""
+    """Get a single assignment by ID for students."""
     assignment = get_student_assignment_by_id(db=db, assignment_id=assignment_id)
-    return assignment
+    return enrich_assignment_response(db, assignment)

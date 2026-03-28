@@ -16,12 +16,16 @@ class Assignment(Base):
 
     title = Column(String, nullable=False)
     description = Column(Text, nullable=True)
-    subject = Column(String, nullable=False)
+    subject = Column(String, nullable=False)  # Kept for backward compatibility
     deadline = Column(DateTime, nullable=False)
     max_marks = Column(Integer, nullable=False)
 
     # FK to users table (Integer to match users.id)
     faculty_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+
+    # Academic hierarchy FKs (nullable for backward compat with old assignments)
+    subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=True, index=True)
+    section_id = Column(Integer, ForeignKey("sections.id"), nullable=True, index=True)
 
     # Cloudinary file URL (optional — assignment may not have a file)
     file_url = Column(Text, nullable=True)
@@ -32,5 +36,7 @@ class Assignment(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationship
+    # Relationships
     faculty = relationship("User")
+    subject_rel = relationship("Subject")
+    section_rel = relationship("Section")

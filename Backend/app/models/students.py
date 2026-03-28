@@ -5,8 +5,8 @@ Represents student profile data linked to a User account.
 
 from datetime import datetime
 from sqlalchemy import Column, String, ForeignKey, Integer, Boolean, DateTime, Text
-from app.db.base import Base
 from sqlalchemy.orm import relationship
+from app.db.base import Base
 
 
 class Student(Base):
@@ -24,13 +24,17 @@ class Student(Base):
     student_branch = Column(String, nullable=False)
     student_year = Column(Integer, nullable=False)
     student_sem = Column(Integer, nullable=False)
-    student_section = Column(String, nullable=False)
+    student_section = Column(String, nullable=False)  # Kept for display
     student_mobile = Column(String(15), nullable=False, unique=True)
     student_profile_pic = Column(Text, nullable=True)  # Cloudinary URL
+
+    # Academic hierarchy FK (nullable for backward compat)
+    section_id = Column(Integer, ForeignKey("sections.id"), nullable=True, index=True)
 
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationship
+    # Relationships
     user = relationship("User", back_populates="student")
+    section = relationship("Section")

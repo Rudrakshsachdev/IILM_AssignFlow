@@ -58,8 +58,14 @@ const AssignmentCard = ({ assignment, onEdit, onDelete, isStudentView = false })
       <div className={styles.cardMeta}>
         <div className={styles.metaItem}>
           <BookOpen className={styles.metaIcon} size={16} />
-          <span className={styles.metaLabel}>{assignment.subject}</span>
+          <span className={styles.metaLabel}>{assignment.subject_name || assignment.subject}</span>
         </div>
+        {assignment.section_label && (
+          <div className={styles.metaItem}>
+            <BookOpen className={styles.metaIcon} size={16} />
+            <span className={styles.metaLabel}>{assignment.section_label}</span>
+          </div>
+        )}
         <div className={styles.metaItem}>
           <Trophy className={styles.metaIcon} size={16} />
           <span>{assignment.max_marks} marks</span>

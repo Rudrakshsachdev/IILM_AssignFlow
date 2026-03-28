@@ -15,6 +15,9 @@ class AssignmentCreate(BaseModel):
     max_marks: int = Field(..., ge=1, le=1000)
     file_url: Optional[str] = None
     status: Optional[str] = "published"
+    # Academic hierarchy (optional for backward compat)
+    subject_id: Optional[int] = None
+    section_id: Optional[int] = None
 
 
 class AssignmentUpdate(BaseModel):
@@ -25,6 +28,8 @@ class AssignmentUpdate(BaseModel):
     max_marks: Optional[int] = Field(None, ge=1, le=1000)
     file_url: Optional[str] = None
     status: Optional[str] = None
+    subject_id: Optional[int] = None
+    section_id: Optional[int] = None
 
 
 class AssignmentResponse(BaseModel):
@@ -37,6 +42,11 @@ class AssignmentResponse(BaseModel):
     faculty_id: int
     file_url: Optional[str] = None
     status: str
+    # Academic hierarchy
+    subject_id: Optional[int] = None
+    section_id: Optional[int] = None
+    subject_name: Optional[str] = None
+    section_label: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

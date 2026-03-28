@@ -18,6 +18,7 @@ class StudentCreate(BaseModel):
     student_mobile: str = Field(..., min_length=10, max_length=15)
     student_email: Optional[str] = None
     student_profile_pic: Optional[str] = None
+    section_id: Optional[int] = None
 
 
 class StudentUpdate(BaseModel):
@@ -30,6 +31,7 @@ class StudentUpdate(BaseModel):
     student_mobile: Optional[str] = Field(None, min_length=10, max_length=15)
     student_email: Optional[str] = None
     student_profile_pic: Optional[str] = None
+    section_id: Optional[int] = None
 
 
 
@@ -46,6 +48,7 @@ class StudentResponse(BaseModel):
     student_section: str
     student_mobile: str
     student_profile_pic: Optional[str] = None
+    section_id: Optional[int] = None
     is_active: bool
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
