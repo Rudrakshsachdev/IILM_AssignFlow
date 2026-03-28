@@ -1,16 +1,8 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
-import Hero from './components/Hero/Hero';
-import AuthForm from './components/AuthForm/AuthForm';
-import Dashboard from './components/Dashboard/Dashboard';
-import { useAuthStore } from './store/useAuthStore';
+import AppRoutes from './routes/AppRoutes';
 import './index.css';
-
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
-  return isAuthenticated ? children : <Navigate to="/login" />;
-};
 
 function App() {
   return (
@@ -18,19 +10,7 @@ function App() {
       <div className="app-container">
         <Navbar />
         <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Hero />} />
-            <Route path="/login" element={<AuthForm type="login" />} />
-            <Route path="/signup" element={<AuthForm type="signup" />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
+          <AppRoutes />
         </main>
       </div>
     </Router>
@@ -38,3 +18,4 @@ function App() {
 }
 
 export default App;
+

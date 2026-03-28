@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
-import axios from 'axios';
+import api from '../../api/axiosConfig';
 import logo from '../../assets/iilm-logo.png';
 import styles from './AuthForm.module.css';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1/auth';
 
 const AuthForm = ({ type }) => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'student', school: '' });
@@ -14,6 +12,7 @@ const AuthForm = ({ type }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const setAuth = useAuthStore(state => state.setAuth);
+  const user = useAuthStore(state => state.user);
 
   const isLogin = type === 'login';
 
@@ -28,11 +27,21 @@ const AuthForm = ({ type }) => {
 
     try {
       if (isLogin) {
-        const res = await axios.post(`${API_URL}/login`, { email: formData.email, password: formData.password });
+        // We use the custom api instance, avoiding manual url manipulation unless needed
+        const res = await api.post('/auth/login', { email: formData.email, password: formData.password });
+        
+        // This will now internally decode the JWT inside Zustand
         setAuth(res.data.access_token);
-        navigate('/dashboard');
+        
+        // We need to wait for state to update or just fetch it direct from Zustand, but we can also just use a microtask or redirect based on the updated store when it re-renders. A pure way is getting state post-set:
+        const updatedState = useAuthStore.getState();
+        if (updatedState.user?.role) {
+           navigate(`/${updatedState.user.role}-dashboard`);
+        } else {
+           navigate('/');
+        }
       } else {
-        await axios.post(`${API_URL}/signup`, formData);
+        await api.post('/auth/signup', formData);
         navigate('/login');
       }
     } catch (err) {
@@ -41,6 +50,7 @@ const AuthForm = ({ type }) => {
       setLoading(false);
     }
   };
+
 
   return (
     <div className={styles.authContainer}>

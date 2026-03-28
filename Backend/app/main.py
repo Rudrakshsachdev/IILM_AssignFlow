@@ -5,7 +5,7 @@ from app.db.base import Base
 
 # Import models so Base knows about them before create_all
 from app.models.users import User
-from app.api.routes import auth
+from app.api.routes import auth, dashboards
 
 # Initialize DB tables
 Base.metadata.create_all(bind=engine)
@@ -21,8 +21,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+# router for authentication
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(dashboards.router, prefix="/api/v1/dashboards", tags=["dashboards"])
+
 
 @app.get("/")
 def read_root():

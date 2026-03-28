@@ -1,5 +1,11 @@
+"""
+This module is used to configure the application settings. 
+"""
+
+# this import is used to import the BaseSettings class from the pydantic_settings module
 from pydantic_settings import BaseSettings
 
+# this class is used to configure the application settings
 class Settings(BaseSettings):
     PROJECT_NAME: str = "IILM AssignFlow"
     API_V1_STR: str = "/api/v1"
