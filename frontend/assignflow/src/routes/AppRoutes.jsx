@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Hero from '../components/Hero/Hero';
+import Landing from '../pages/Landing/Landing';
 import AuthForm from '../components/AuthForm/AuthForm';
 import ProtectedRoute from './ProtectedRoute';
 import StudentDashboard from '../pages/StudentDashboard/StudentDashboard';
@@ -14,7 +14,8 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Hero />} />
+      <Route path="/" element={<Landing />} />
+
       <Route path="/login" element={<AuthForm type="login" />} />
       <Route path="/signup" element={<AuthForm type="signup" />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
