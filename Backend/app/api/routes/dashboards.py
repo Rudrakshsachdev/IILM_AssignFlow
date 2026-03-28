@@ -1,3 +1,7 @@
+"""
+This module defines API routes for different user dashboards in the application. Each dashboard route is protected by role-based access control, ensuring that only users with the appropriate roles can access their respective dashboards. The routes include a student dashboard, a faculty dashboard, and an admin dashboard, each returning a welcome message and relevant content for the user role. The `require_role` dependency is used to enforce access control based on user roles defined in the system.
+"""
+
 from fastapi import APIRouter
 from app.models.users import User
 from app.api.deps import require_role

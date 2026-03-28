@@ -1,3 +1,7 @@
+/*
+This component defines an authentication form for both login and signup functionalities in a React application. It uses Zustand for state management and Axios for API requests. The form includes fields for name, email, password, role, and school (for signup), with validation and error handling. The password field has a toggle to show or hide the password. Upon successful login, the user is redirected to their respective dashboard based on their role. The component also provides a link to switch between login and signup forms.
+*/
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';

@@ -1,3 +1,8 @@
+/*
+This module configures a custom axios instance for making API requests in the frontend application. It sets the base URL for the API from environment variables and includes interceptors to handle authentication and error responses. The request interceptor attaches the JWT token from local storage to the Authorization header of each request, while the response interceptor checks for 401 and 403 status codes to automatically log out the user and redirect them to the login page if their session has expired or they are unauthorized. This setup ensures that all API interactions are secure and that users are properly authenticated when accessing protected routes.
+*/
+
+
 import axios from 'axios';
 import { useAuthStore } from '../store/useAuthStore';
 
@@ -12,6 +17,7 @@ const api = axios.create({
 
 // Request interceptor to attach the JWT token
 api.interceptors.request.use(
+  // Before sending the request, check if a token exists in local storage and attach it to the Authorization header
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
