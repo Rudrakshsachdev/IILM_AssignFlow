@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
+import { Plus, ClipboardList, Search } from 'lucide-react';
 import {
   getAssignments,
   createAssignment,
@@ -133,8 +134,8 @@ const FacultyDashboard = () => {
           <p>Welcome back, {user?.email}</p>
         </div>
         <div className={styles.headerRight}>
-          <button className="btn-primary" onClick={() => { setEditingAssignment(null); setShowForm(true); }}>
-            + New Assignment
+          <button className="btn-primary" onClick={() => { setEditingAssignment(null); setShowForm(true); }} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Plus size={18} /> New Assignment
           </button>
           <button className="btn-secondary" onClick={() => navigate('/faculty-dashboard/profile')}>
             Profile
@@ -167,13 +168,17 @@ const FacultyDashboard = () => {
 
       {/* Toolbar */}
       <div className={styles.toolbar}>
-        <input
-          className={styles.searchInput}
-          type="text"
-          placeholder="🔍 Search by subject..."
-          value={searchSubject}
-          onChange={(e) => setSearchSubject(e.target.value)}
-        />
+        <div style={{ position: 'relative', flex: 1, minWidth: '250px' }}>
+          <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+          <input
+            className={styles.searchInput}
+            style={{ paddingLeft: '2.5rem' }}
+            type="text"
+            placeholder="Search by subject..."
+            value={searchSubject}
+            onChange={(e) => setSearchSubject(e.target.value)}
+          />
+        </div>
         <select className={styles.filterSelect} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="">All Statuses</option>
           <option value="published">Published</option>
@@ -200,11 +205,11 @@ const FacultyDashboard = () => {
         </div>
       ) : assignments.length === 0 ? (
         <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>📋</div>
+          <div className={styles.emptyIcon} style={{ color: '#cbd5e1' }}><ClipboardList size={48} /></div>
           <h3>No Assignments Yet</h3>
           <p>Create your first assignment to start managing your academic workflow.</p>
-          <button className="btn-primary" onClick={() => setShowForm(true)}>
-            + Create Assignment
+          <button className="btn-primary" onClick={() => setShowForm(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Plus size={18} /> Create Assignment
           </button>
         </div>
       ) : (

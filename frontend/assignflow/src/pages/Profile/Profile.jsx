@@ -13,6 +13,7 @@ import {
 } from '../../api/student';
 
 import ProfileForm from '../../components/ProfileForm/ProfileForm';
+import { Camera } from 'lucide-react';
 import styles from './Profile.module.css';
 
 const Profile = () => {
@@ -220,7 +221,7 @@ const Profile = () => {
               onClick={() => fileInputRef.current?.click()}
               title="Change profile picture"
             >
-              {uploadingPic ? '…' : '📷'}
+              {uploadingPic ? '…' : <Camera size={24} color="white" />}
             </div>
             <input
               ref={fileInputRef}

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Edit3, PlusSquare, Loader2, CheckCircle, UploadCloud } from 'lucide-react';
 import { uploadAssignmentFile } from '../../api/assignment';
 import styles from './AssignmentForm.module.css';
 
@@ -125,7 +126,9 @@ const AssignmentForm = ({ existingData, onSubmit, onCancel, isLoading, inline = 
 
   const formContent = (
     <>
-      <h2>{isEditMode ? '✏️ Edit Assignment' : '➕ Create Assignment'}</h2>
+      <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        {isEditMode ? <><Edit3 size={24} color="var(--primary-color)" /> Edit Assignment</> : <><PlusSquare size={24} color="var(--primary-color)" /> Create Assignment</>}
+      </h2>
       <p>{isEditMode ? 'Update the assignment details below.' : 'Fill in the assignment details to publish.'}</p>
 
       <form onSubmit={handleSubmit}>
@@ -211,16 +214,19 @@ const AssignmentForm = ({ existingData, onSubmit, onCancel, isLoading, inline = 
               onDragLeave={handleDragLeave}
             >
               {uploading ? (
-                <p className={styles.uploadingText}>⏳ Uploading...</p>
+                <div className={styles.uploadingText} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                  <Loader2 size={24} className={styles.spin} color="var(--primary-color)" />
+                  <p>Uploading...</p>
+                </div>
               ) : formData.file_url ? (
                 <>
-                  <div className={styles.fileUploadIcon}>✅</div>
+                  <div className={styles.fileUploadIcon}><CheckCircle size={32} color="#22c55e" /></div>
                   <p className={styles.fileName}>{uploadedFileName || 'File uploaded'}</p>
                   <p className={styles.fileUploadText}>Click or drag to replace</p>
                 </>
               ) : (
                 <>
-                  <div className={styles.fileUploadIcon}>📁</div>
+                  <div className={styles.fileUploadIcon}><UploadCloud size={32} color="#64748b" /></div>
                   <p className={styles.fileUploadText}>
                     <strong>Click to upload</strong> or drag & drop
                   </p>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { BookOpen, Trophy, Calendar, Clock, Paperclip, Edit2, Trash2 } from 'lucide-react';
 import styles from './AssignmentCard.module.css';
 
 const AssignmentCard = ({ assignment, onEdit, onDelete }) => {
@@ -45,22 +46,22 @@ const AssignmentCard = ({ assignment, onEdit, onDelete }) => {
 
       <div className={styles.cardMeta}>
         <div className={styles.metaItem}>
-          <span className={styles.metaIcon}>📚</span>
+          <BookOpen className={styles.metaIcon} size={16} />
           <span className={styles.metaLabel}>{assignment.subject}</span>
         </div>
         <div className={styles.metaItem}>
-          <span className={styles.metaIcon}>🏆</span>
+          <Trophy className={styles.metaIcon} size={16} />
           <span>{assignment.max_marks} marks</span>
         </div>
         <div className={styles.metaItem}>
-          <span className={styles.metaIcon}>📅</span>
+          <Calendar className={styles.metaIcon} size={16} />
           <span className={isDeadlinePassed ? styles.deadlinePassed : ''}>
             {formatDate(assignment.deadline)}
             {isDeadlinePassed && ' (Past)'}
           </span>
         </div>
         <div className={styles.metaItem}>
-          <span className={styles.metaIcon}>🕐</span>
+          <Clock className={styles.metaIcon} size={16} />
           <span>Created {formatDate(assignment.created_at)}</span>
         </div>
       </div>
@@ -72,16 +73,16 @@ const AssignmentCard = ({ assignment, onEdit, onDelete }) => {
           rel="noopener noreferrer"
           className={styles.fileLink}
         >
-          📎 View Attachment
+          <Paperclip size={16} style={{ marginRight: '0.4rem' }} /> View Attachment
         </a>
       )}
 
       <div className={styles.cardActions}>
-        <button className="btn-secondary" onClick={() => onEdit(assignment)}>
-          ✏️ Edit
+        <button className="btn-secondary" onClick={() => onEdit(assignment)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+          <Edit2 size={16} /> Edit
         </button>
-        <button className="btn-secondary" onClick={handleDelete} style={{ color: '#dc2626', borderColor: '#fecaca' }}>
-          🗑️ Delete
+        <button className="btn-secondary" onClick={handleDelete} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#dc2626', borderColor: '#fecaca' }}>
+          <Trash2 size={16} /> Delete
         </button>
       </div>
     </div>

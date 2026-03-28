@@ -14,6 +14,7 @@ import {
 } from '../../api/faculty';
 
 import FacultyProfileForm from '../../components/FacultyProfileForm/FacultyProfileForm';
+import { Camera } from 'lucide-react';
 import styles from './Profile.module.css';
 
 const FacultyProfile = () => {
@@ -220,7 +221,7 @@ const FacultyProfile = () => {
               onClick={() => fileInputRef.current?.click()}
               title="Change profile picture"
             >
-              {uploadingPic ? '…' : '📷'}
+              {uploadingPic ? '…' : <Camera size={24} color="white" />}
             </div>
             <input
               ref={fileInputRef}
