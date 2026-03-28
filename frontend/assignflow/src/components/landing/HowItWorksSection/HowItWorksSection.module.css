@@ -1,0 +1,65 @@
+.section {
+  padding: 8rem 2rem;
+  background: #f8fafc; /* Light slate background to distinguish from Features */
+  position: relative;
+  overflow: hidden;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 6rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 2.75rem;
+  font-weight: 850;
+  color: var(--secondary-color);
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+@media (min-width: 1024px) {
+  .timeline {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 6rem 1.5rem;
+  }
+  .title {
+    font-size: 2.25rem;
+  }
+}
