@@ -11,6 +11,7 @@ import Profile from '../pages/Profile/Profile';
 import FacultyProfile from '../pages/Profile/FacultyProfile';
 import ForgotPassword from '../pages/Auth/ForgotPassword';
 import ResetPassword from '../pages/Auth/ResetPassword';
+import CreateAssignment from '../pages/FacultyDashboard/CreateAssignment';
 
 const AppRoutes = () => {
 
@@ -58,6 +59,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={['faculty']}>
             <FacultyProfile />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/faculty-dashboard/create-assignment"
+        element={
+          <ProtectedRoute allowedRoles={['faculty']}>
+            <CreateAssignment />
           </ProtectedRoute>
         }
       />

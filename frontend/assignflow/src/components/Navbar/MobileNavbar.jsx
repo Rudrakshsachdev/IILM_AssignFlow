@@ -20,6 +20,7 @@ const MobileNavbar = () => {
 
   const dashboardPath = user?.role === 'student' ? '/student-dashboard' : (user?.role === 'faculty' ? '/faculty-dashboard' : (user?.role === 'admin' ? '/admin-dashboard' : '/'));
   const profilePath = user?.role === 'student' ? '/student-dashboard/profile' : '/faculty-dashboard/profile';
+  const assignmentsPath = user?.role === 'faculty' ? '/faculty-dashboard/create-assignment' : null;
 
   return (
     <nav className={styles.navbar}>
@@ -38,6 +39,7 @@ const MobileNavbar = () => {
             {isAuthenticated ? (
               <>
                 <Link to={dashboardPath} className={styles.navLink} onClick={closeMenu}>Dashboard</Link>
+                {assignmentsPath && <Link to={assignmentsPath} className={styles.navLink} onClick={closeMenu}>Assignments</Link>}
                 <Link to={profilePath} className={styles.navLink} onClick={closeMenu}>Profile</Link>
                 <button onClick={handleLogout} className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>Logout</button>
               </>

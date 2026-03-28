@@ -7,7 +7,8 @@ from app.db.base import Base
 from app.models.users import User
 from app.models.students import Student
 from app.models.faculties import Faculty
-from app.api.routes import auth, dashboards, student, faculty
+from app.models.assignment import Assignment
+from app.api.routes import auth, dashboards, student, faculty, assignment
 
 # Initialize DB tables
 Base.metadata.create_all(bind=engine)
@@ -28,6 +29,7 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(dashboards.router, prefix="/api/v1/dashboards", tags=["dashboards"])
 app.include_router(student.router, prefix="/api/v1/student", tags=["student"])
 app.include_router(faculty.router, prefix="/api/v1/faculty", tags=["faculty"])
+app.include_router(assignment.router, prefix="/api/v1/assignments", tags=["assignments"])
 
 
 @app.get("/")

@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     # Cloudinary credentials (set these in your .env file)
     CLOUDINARY_CLOUD_NAME: str = ""
     CLOUDINARY_PRESET_NAME: str = ""
+    CLOUDINARY_UPLOAD_ASSIGNMENT_PRESET: str = ""
+
 
 
 
