@@ -10,7 +10,20 @@ from app.schemas.student import StudentCreate, StudentUpdate
 
 
 def create_student_profile(db: Session, user_id: int, data: StudentCreate) -> Student:
-    """Create a new student profile linked to the authenticated user."""
+    """
+    This function creates a new student profile in the database. It first checks if a profile already exists for the given user_id, and if so, it raises a 409 Conflict HTTP exception. It also checks for duplicate student URN and mobile number to ensure data integrity. If all checks pass, it creates a new Student instance with the provided data, adds it to the database session, commits the transaction, and refreshes the instance to return the newly created student profile.
+
+    Arguments:
+    - db: A SQLAlchemy Session object for database operations.
+    - user_id: An integer representing the ID of the user to whom the student profile will be linked.
+    - data: A StudentCreate schema object containing the data for the new student profile.
+
+    Returns:
+    - A Student object representing the newly created student profile.
+
+    Raises:
+    - HTTPException: If a student profile already exists for the user_id, if the student URN is already in use, or if the mobile number is already registered.
+    """
 
     # Check for duplicate profile
     existing = db.query(Student).filter(Student.user_id == user_id).first()
@@ -47,13 +60,32 @@ def create_student_profile(db: Session, user_id: int, data: StudentCreate) -> St
 
 
 def get_student_profile(db: Session, user_id: int) -> Student:
-    """Fetch a student profile by user_id. Returns None if not found."""
+    """
+    This function retrieves a student profile from the database based on the provided user_id. It queries the Student table for a profile linked to the given user_id and returns it. If no profile is found, it returns None.
+
+    Arguments:
+    - db: A SQLAlchemy Session object for database operations.
+    - user_id: An integer representing the ID of the user whose student profile is to be retrieved.
+
+    Returns:
+    - A Student object representing the student profile linked to the user_id, or None if no profile is found.
+    """
     profile = db.query(Student).filter(Student.user_id == user_id).first()
     return profile
 
 
 def update_student_profile(db: Session, user_id: int, data: StudentUpdate) -> Student:
-    """Update an existing student profile. Only updates non-None fields."""
+    """
+    This function updates an existing student profile in the database. It first retrieves the profile linked to the given user_id. If no profile is found, it raises a 404 Not Found HTTP exception. It then updates the profile fields with the provided data, commits the changes to the database, and refreshes the instance to return the updated student profile.
+
+    Arguments:
+    - db: A SQLAlchemy Session object for database operations.
+    - user_id: An integer representing the ID of the user whose student profile is to be updated.
+    - data: A StudentUpdate schema object containing the fields to be updated in the student profile.
+
+    Returns:
+    - A Student object representing the updated student profile.
+    """
 
     profile = db.query(Student).filter(Student.user_id == user_id).first()
     if not profile:
@@ -72,7 +104,17 @@ def update_student_profile(db: Session, user_id: int, data: StudentUpdate) -> St
 
 
 def update_profile_pic_url(db: Session, user_id: int, url: str) -> Student:
-    """Update only the profile picture URL for a student profile."""
+    """
+    This function updates the profile picture URL for a student profile.
+
+    Arguments:
+    - db: A SQLAlchemy Session object for database operations.
+    - user_id: An integer representing the ID of the user whose student profile is to be updated.
+    - url: A string representing the new profile picture URL.
+
+    Returns:
+    - A Student object representing the updated student profile.
+    """
     profile = db.query(Student).filter(Student.user_id == user_id).first()
     if not profile:
         raise HTTPException(
