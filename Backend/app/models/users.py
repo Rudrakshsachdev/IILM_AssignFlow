@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from app.db.base import Base
 
 class User(Base):
@@ -10,3 +11,6 @@ class User(Base):
     password = Column(String, nullable=False)
     role = Column(String, nullable=False)  # student / faculty / admin
     school = Column(String, nullable=True)
+
+    # One-to-one relationship with Student profile
+    student = relationship("Student", back_populates="user", uselist=False)

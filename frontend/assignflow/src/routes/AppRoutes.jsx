@@ -7,6 +7,7 @@ import StudentDashboard from '../pages/StudentDashboard/StudentDashboard';
 import FacultyDashboard from '../pages/FacultyDashboard/FacultyDashboard';
 import AdminDashboard from '../pages/AdminDashboard/AdminDashboard';
 import Unauthorized from '../pages/Unauthorized/Unauthorized';
+import Profile from '../pages/Profile/Profile';
 
 const AppRoutes = () => {
   return (
@@ -22,6 +23,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={['student']}>
             <StudentDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/student-dashboard/profile"
+        element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <Profile />
           </ProtectedRoute>
         }
       />
@@ -44,10 +54,11 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Legacy dashboard fallback - route to specific dashboard based on auth or login */}
+      {/* Legacy dashboard fallback */}
       <Route path="/dashboard" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
 
 export default AppRoutes;
+

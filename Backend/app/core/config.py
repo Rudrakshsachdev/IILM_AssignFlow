@@ -4,6 +4,10 @@ This module is used to configure the application settings.
 
 # this import is used to import the BaseSettings class from the pydantic_settings module
 from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # this class is used to configure the application settings
 class Settings(BaseSettings):
@@ -13,6 +17,12 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     DATABASE_URL: str = "sqlite:///./assignflow.db"
+
+    # Cloudinary credentials (set these in your .env file)
+    CLOUDINARY_CLOUD_NAME: str = ""
+    CLOUDINARY_PRESET_NAME: str = ""
+
+
 
     class Config:
         env_file = ".env"
