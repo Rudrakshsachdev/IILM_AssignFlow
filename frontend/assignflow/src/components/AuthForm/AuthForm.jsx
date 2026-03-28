@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import axios from 'axios';
+import logo from '../../assets/iilm-logo.png';
 import styles from './AuthForm.module.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -45,7 +46,8 @@ const AuthForm = ({ type }) => {
     <div className={styles.authContainer}>
       <div className={`${styles.authCard} glass-card`}>
         <div className={styles.authHeader}>
-          <img src="/src/assets/iilm-logo.png" alt="IILM Logo" className={styles.authLogo} />
+          <img src={logo} alt="IILM Logo" className={styles.authLogo} />
+
           <h2>{isLogin ? 'Welcome Back' : 'Create an Account'}</h2>
           <p className={styles.authSubtitle}>
             {isLogin ? 'Please enter your details to sign in.' : 'Enter your details to register.'}
