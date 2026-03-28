@@ -15,10 +15,31 @@ from app.models.users import User
 
 
 def get_all_courses(db: Session) -> List[Course]:
+    """
+    This function retrieves all courses from the database, ordered by their name. It returns a list of Course objects. The courses are sorted alphabetically to provide an organized view when displayed in the frontend or used in dropdowns.
+
+    Arguments:
+    db (Session): The database session used to perform the query.
+
+    Returns:
+    List[Course]: A list of Course objects representing all courses in the database, ordered by name.
+    """
     return db.query(Course).order_by(Course.name).all()
 
 
 def get_all_sections(db: Session, course_id: Optional[int] = None) -> List[Section]:
+
+    """
+    This function retrieves all sections from the database, optionally filtered by a specific course ID. If a course_id is provided, it returns only the sections that belong to that course. If no course_id is provided, it returns all sections. The sections are ordered by course ID, year, and section name to ensure a logical grouping and display order.
+
+    Arguments:
+    db (Session): The database session used to perform the query.
+    course_id (Optional[int]): An optional integer representing the ID of the course to filter sections by. If None, all sections are returned.
+
+    Returns:
+    List[Section]: A list of Section objects representing the sections in the database, optionally filtered by course ID and ordered by course ID, year, and section name.  
+    """
+
     query = db.query(Section)
     if course_id:
         query = query.filter(Section.course_id == course_id)
@@ -26,11 +47,36 @@ def get_all_sections(db: Session, course_id: Optional[int] = None) -> List[Secti
 
 
 def get_all_subjects(db: Session) -> List[Subject]:
+    """
+    This function retrieves all subjects from the database, ordered by their name. It returns a list of Subject objects. The subjects are sorted alphabetically to provide an organized view when displayed in the frontend or used in dropdowns.
+
+    Arguments:
+    db (Session): The database session used to perform the query.
+
+    Returns:
+    List[Subject]: A list of Subject objects representing all subjects in the database, ordered by name.
+    """
     return db.query(Subject).order_by(Subject.name).all()
 
 
 def get_faculty_mappings(db: Session, faculty_id: int) -> List[dict]:
-    """Get all subject-section mappings for a faculty member with display labels."""
+    """
+    This function retrieves all faculty mappings for a specific faculty member, including display labels for the associated subjects and sections. It queries the FacultyMapping table for entries matching the given faculty_id, then enriches each mapping with the subject name and a formatted section label that includes the course name, year, and section name. The result is a list of dictionaries containing detailed information about each mapping.
+
+    Arguments:
+    db (Session): The database session used to perform the query.
+    faculty_id (int): The ID of the faculty member for whom to retrieve mappings.   
+
+    Returns:
+    List[dict]: A list of dictionaries, each representing a faculty mapping with the following keys:
+        - id: The ID of the faculty mapping.
+        - faculty_id: The ID of the faculty member.
+        - subject_id: The ID of the subject associated with the mapping.
+        - section_id: The ID of the section associated with the mapping.
+        - subject_name: The name of the subject associated with the mapping.
+        - section_label: A formatted string representing the section, including course name, year, and section name.
+        - created_at: The timestamp when the mapping was created.
+    """
     mappings = db.query(FacultyMapping).filter(
         FacultyMapping.faculty_id == faculty_id
     ).all()
@@ -59,6 +105,17 @@ def get_faculty_mappings(db: Session, faculty_id: int) -> List[dict]:
 
 
 def get_all_faculty_mappings(db: Session) -> List[dict]:
+
+    """
+    This function retrieves all faculty mappings across all faculty members, including display labels for the associated subjects and sections. It queries the FacultyMapping table for all entries, then enriches each mapping with the subject name, a formatted section label that includes the course name, year, and section name, and the faculty member's name and email. The result is a list of dictionaries containing detailed information about each mapping, which can be used for administrative purposes to view and manage faculty assignments.
+
+    Arguments:
+    db (Session): The database session used to perform the query.
+    
+    Returns:
+    List[dict]: A list of dictionaries, each representing a faculty mapping with the following keys
+    """
+
     """Get all subject-section mappings across all faculties. (Admin use)"""
     mappings = db.query(FacultyMapping).all()
 
