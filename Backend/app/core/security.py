@@ -55,3 +55,43 @@ def create_access_token(data: dict):
 
     # here, we encode the token using the secret key and algorithm specified in the settings and return the encoded JWT token
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+
+def create_password_reset_token(email: str, current_hashed_password: str) -> str:
+    """Create a stateless, single-use password reset token valid for 15 minutes."""
+    expire = datetime.utcnow() + timedelta(minutes=15)
+    
+    # We embed the current hashed password directly into the data payload.
+    # If the user successfully resets their password, the database hash will change,
+    # and this specific token will automatically become invalid during verification.
+    to_encode = {
+        "exp": expire,
+        "sub": email,
+        "hash": current_hashed_password[-10:]  # Just a chunk of it is enough to invalidate on change
+    }
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    return encoded_jwt
+
+
+def verify_password_reset_token(token: str, current_hashed_password: str):
+    """
+    Verify the reset token. 
+    Returns the email (sub) if valid and the password hasn't been changed yet.
+    Returns None if expired, invalid, or the password was already changed.
+    """
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        email: str = payload.get("sub")
+        token_hash_chunk: str = payload.get("hash")
+        
+        if email is None or token_hash_chunk is None:
+            return None
+            
+        # Verify the hash chunk matches their CURRENT database password hash.
+        # If they already reset it, this will fail.
+        if token_hash_chunk != current_hashed_password[-10:]:
+            return None
+            
+        return email
+    except jwt.JWTError:
+        return None

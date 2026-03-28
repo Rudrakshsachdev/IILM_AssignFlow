@@ -117,6 +117,17 @@ const AuthForm = ({ type }) => {
                 )}
               </button>
             </div>
+            {isLogin && (
+              <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
+                <span 
+                  className={styles.linkText} 
+                  style={{ fontSize: '0.85rem', fontWeight: 500 }}
+                  onClick={() => navigate('/forgot-password')}
+                >
+                  Forgot Password?
+                </span>
+              </div>
+            )}
           </div>
           <button type="submit" className={`btn-primary ${styles.authSubmit}`} disabled={loading}>
             {loading ? 'Processing...' : (isLogin ? 'Login' : 'Sign Up')}

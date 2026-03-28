@@ -9,6 +9,8 @@ import AdminDashboard from '../pages/AdminDashboard/AdminDashboard';
 import Unauthorized from '../pages/Unauthorized/Unauthorized';
 import Profile from '../pages/Profile/Profile';
 import FacultyProfile from '../pages/Profile/FacultyProfile';
+import ForgotPassword from '../pages/Auth/ForgotPassword';
+import ResetPassword from '../pages/Auth/ResetPassword';
 
 const AppRoutes = () => {
 
@@ -18,7 +20,10 @@ const AppRoutes = () => {
 
       <Route path="/login" element={<AuthForm type="login" />} />
       <Route path="/signup" element={<AuthForm type="signup" />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
+
 
       {/* Protected Routes specific to roles */}
       <Route
