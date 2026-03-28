@@ -4,7 +4,7 @@ The main purpose of this module is to provide utility functions for handling sec
 
 
 # import for password hashing
-from passlib.context import CryptContext
+import bcrypt
 
 # import for JWT token creation and verification
 from jose import jwt
@@ -15,17 +15,31 @@ from datetime import datetime, timedelta
 # import settings from the configuration file for secret key and algorithm
 from app.core.config import settings
 
-# Create a password context for hashing and verifying passwords using bcrypt algorithm
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 def hash_password(password: str) -> str:
     """Hash a plaintext password using bcrypt algorithm."""
-    return pwd_context.hash(password)
+
+    # this pwd_bytes is used to encode the password into bytes
+    pwd_bytes = password.encode('utf-8')
+
+    # this salt is used to generate a random salt for the password
+    salt = bcrypt.gensalt()
+    
+    # this bcrypt.hashpw() function is used to hash the password
+    return bcrypt.hashpw(pwd_bytes, salt).decode('utf-8')
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a plaintext password against a hashed password."""
-    return pwd_context.verify(plain_password, hashed_password)
+
+    # this password_byte_enc is used to encode the plaintext password into bytes
+    password_byte_enc = plain_password.encode('utf-8')
+
+    # this hashed_password_byte_enc is used to encode the hashed password into bytes
+    hashed_password_byte_enc = hashed_password.encode('utf-8')
+
+    # this bcrypt.checkpw() function is used to verify the plaintext password against the hashed password
+    return bcrypt.checkpw(password_byte_enc, hashed_password_byte_enc)
+
 
 def create_access_token(data: dict):
     """Create a JWT access token with an expiration time."""
