@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import AuthForm from './components/AuthForm';
-import Dashboard from './components/Dashboard';
+import Navbar from './components/Navbar/Navbar';
+import Hero from './components/Hero/Hero';
+import AuthForm from './components/AuthForm/AuthForm';
+import Dashboard from './components/Dashboard/Dashboard';
 import { useAuthStore } from './store/useAuthStore';
 import './index.css';
 
@@ -22,13 +22,13 @@ function App() {
             <Route path="/" element={<Hero />} />
             <Route path="/login" element={<AuthForm type="login" />} />
             <Route path="/signup" element={<AuthForm type="signup" />} />
-            <Route 
-              path="/dashboard" 
+            <Route
+              path="/dashboard"
               element={
                 <ProtectedRoute>
                   <Dashboard />
                 </ProtectedRoute>
-              } 
+              }
             />
           </Routes>
         </main>

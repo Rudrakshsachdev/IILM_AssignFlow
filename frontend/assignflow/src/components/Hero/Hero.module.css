@@ -1,0 +1,83 @@
+.heroSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex: 1;
+  gap: 4rem;
+}
+
+.heroContent {
+  flex: 1;
+  animation: slideUp 0.8s ease backwards;
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  font-weight: 800;
+}
+
+.heroSubtitle {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+  max-width: 600px;
+}
+
+.heroButtons {
+  display: flex;
+  gap: 1rem;
+}
+
+.heroVisual {
+  flex: 1;
+  position: relative;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: float 6s ease-in-out infinite;
+}
+
+.decorativeCard1 {
+  position: absolute;
+  top: 10%;
+  left: 0;
+  width: 280px;
+  transform: rotate(-5deg);
+  z-index: 2;
+}
+
+.decorativeCard2 {
+  position: absolute;
+  bottom: 10%;
+  right: 0;
+  width: 280px;
+  transform: rotate(5deg);
+  z-index: 1;
+}
+
+/* Animations included locally or global? slideUp and float are in index.css. 
+   Modules can reference global animations, but let's keep them in index.css 
+   or move them here if they are only for Hero. 
+   slideUp is used by Auth too. float seems Hero-only. */
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

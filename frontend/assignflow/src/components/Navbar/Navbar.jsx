@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/useAuthStore';
-import logo from '../assets/iilm-logo1.png';
+import { useAuthStore } from '../../store/useAuthStore';
+import logo from '../../assets/iilm-logo.png';
+import styles from './Navbar.module.css';
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useAuthStore();
@@ -13,21 +14,21 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar">
-      <div className="nav-container">
-        <Link to="/" className="nav-logo">
-          <img src={logo} alt="IILM Logo" className="logo-image" />
-          <span className="logo-text">AssignFlow</span>
+    <nav className={styles.navbar}>
+      <div className={styles.navContainer}>
+        <Link to="/" className={styles.navLogo}>
+          <img src={logo} alt="IILM Logo" className={styles.logoImage} />
+          <span className={styles.logoText}>AssignFlow</span>
         </Link>
-        <div className="nav-links">
+        <div className={styles.navLinks}>
           {isAuthenticated ? (
             <>
-              <Link to="/dashboard" className="nav-link">Dashboard</Link>
+              <Link to="/dashboard" className={styles.navLink}>Dashboard</Link>
               <button onClick={handleLogout} className="btn-primary">Logout</button>
             </>
           ) : (
             <>
-              <Link to="/login" className="nav-link">Login</Link>
+              <Link to="/login" className={styles.navLink}>Login</Link>
               <Link to="/signup" className="btn-primary">Sign Up</Link>
             </>
           )}
@@ -38,3 +39,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
