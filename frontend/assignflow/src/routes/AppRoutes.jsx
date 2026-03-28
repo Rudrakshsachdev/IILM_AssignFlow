@@ -92,6 +92,15 @@ const AppRoutes = () => {
         }
       />
 
+      <Route
+        path="/admin-dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Legacy dashboard fallback */}
 
       <Route path="/dashboard" element={<Navigate to="/" replace />} />

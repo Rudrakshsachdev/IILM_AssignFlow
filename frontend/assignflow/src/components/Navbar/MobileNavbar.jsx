@@ -19,7 +19,7 @@ const MobileNavbar = () => {
   const closeMenu = () => setIsOpen(false);
 
   const dashboardPath = user?.role === 'student' ? '/student-dashboard' : (user?.role === 'faculty' ? '/faculty-dashboard' : (user?.role === 'admin' ? '/admin-dashboard' : '/'));
-  const profilePath = user?.role === 'student' ? '/student-dashboard/profile' : '/faculty-dashboard/profile';
+  const profilePath = user?.role === 'student' ? '/student-dashboard/profile' : (user?.role === 'faculty' ? '/faculty-dashboard/profile' : null);
   const assignmentsPath = user?.role === 'faculty' ? '/faculty-dashboard/create-assignment' : (user?.role === 'student' ? '/student-dashboard/assignments' : null);
 
   return (
@@ -40,7 +40,7 @@ const MobileNavbar = () => {
               <>
                 <Link to={dashboardPath} className={styles.navLink} onClick={closeMenu}>Dashboard</Link>
                 {assignmentsPath && <Link to={assignmentsPath} className={styles.navLink} onClick={closeMenu}>Assignments</Link>}
-                <Link to={profilePath} className={styles.navLink} onClick={closeMenu}>Profile</Link>
+                {profilePath && <Link to={profilePath} className={styles.navLink} onClick={closeMenu}>Profile</Link>}
                 <button onClick={handleLogout} className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>Logout</button>
               </>
             ) : (

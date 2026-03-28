@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
 import { uploadProfilePicOnly } from '../../api/student';
+import { getCourses, getSections } from '../../api/academic';
 import styles from '../../pages/Profile/Profile.module.css';
 
 
@@ -14,6 +14,7 @@ const INITIAL_FORM = {
   student_section: '',
   student_mobile: '',
   student_profile_pic: '',
+  section_id: null,
 };
 
 const ProfileForm = ({ existingData, onSubmit, isLoading, isEditMode, onCancel }) => {
@@ -31,13 +32,54 @@ const ProfileForm = ({ existingData, onSubmit, isLoading, isEditMode, onCancel }
           student_section: existingData.student_section || '',
           student_mobile: existingData.student_mobile || '',
           student_profile_pic: existingData.student_profile_pic || '',
+          section_id: existingData.section_id || null,
         }
       : INITIAL_FORM
   );
 
+  const [courses, setCourses] = useState([]);
+  const [sections, setSections] = useState([]);
+  const [selectedCourseId, setSelectedCourseId] = useState('');
+
   const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
+
+  // Fetch courses on mount
+  React.useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const data = await getCourses();
+        setCourses(data);
+        
+        // If editing, try to find the course_id for the current section
+        if (isEditMode && existingData?.section_id) {
+          // This is a bit tricky since we don't have course_id in student response directly
+          // We can let the user re-select or we'd need to fetch the section details first
+        }
+      } catch (err) {
+        console.error('Failed to load courses', err);
+      }
+    };
+    fetchCourses();
+  }, [isEditMode, existingData]);
+
+  // Fetch sections when course changes
+  React.useEffect(() => {
+    const fetchSections = async () => {
+      if (!selectedCourseId) {
+        setSections([]);
+        return;
+      }
+      try {
+        const data = await getSections(selectedCourseId);
+        setSections(data);
+      } catch (err) {
+        console.error('Failed to load sections', err);
+      }
+    };
+    fetchSections();
+  }, [selectedCourseId]);
 
   const validate = () => {
     const newErrors = {};
@@ -65,6 +107,31 @@ const ProfileForm = ({ existingData, onSubmit, isLoading, isEditMode, onCancel }
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
+  };
+
+  const handleCourseChange = (e) => {
+    const courseId = e.target.value;
+    setSelectedCourseId(courseId);
+    
+    const courseName = courses.find(c => c.id === parseInt(courseId))?.name || '';
+    setFormData(prev => ({ 
+      ...prev, 
+      student_course: courseName,
+      section_id: null,
+      student_section: '' 
+    }));
+  };
+
+  const handleSectionChange = (e) => {
+    const sectionId = e.target.value;
+    const section = sections.find(s => s.id === parseInt(sectionId));
+    
+    setFormData(prev => ({ 
+      ...prev, 
+      section_id: parseInt(sectionId),
+      student_section: section ? `Section ${section.section_name}` : '',
+      student_year: section ? section.year : prev.student_year
+    }));
   };
 
   const handleFileChange = async (e) => {
@@ -202,13 +269,18 @@ const ProfileForm = ({ existingData, onSubmit, isLoading, isEditMode, onCancel }
 
           <div className={styles.formGroup}>
             <label>Course *</label>
-            <input
-              type="text"
-              name="student_course"
-              value={formData.student_course}
-              onChange={handleChange}
-              placeholder="e.g. B.Tech"
-            />
+            <select 
+              name="course_select" 
+              value={selectedCourseId} 
+              onChange={handleCourseChange}
+              required={!isEditMode}
+            >
+              <option value="">Select Course</option>
+              {courses.map(c => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+            {isEditMode && <small>Current: {formData.student_course}</small>}
             {errors.student_course && <small style={{ color: '#991b1b' }}>{errors.student_course}</small>}
           </div>
 
@@ -246,13 +318,19 @@ const ProfileForm = ({ existingData, onSubmit, isLoading, isEditMode, onCancel }
 
           <div className={styles.formGroup}>
             <label>Section *</label>
-            <input
-              type="text"
-              name="student_section"
-              value={formData.student_section}
-              onChange={handleChange}
-              placeholder="e.g. A"
-            />
+            <select 
+              name="section_id" 
+              value={formData.section_id || ''} 
+              onChange={handleSectionChange}
+              required={!isEditMode}
+              disabled={!selectedCourseId && !isEditMode}
+            >
+              <option value="">{selectedCourseId ? 'Select Section' : 'Select course first'}</option>
+              {sections.map(s => (
+                <option key={s.id} value={s.id}>Year {s.year} - Section {s.section_name}</option>
+              ))}
+            </select>
+            {isEditMode && <small>Current: {formData.student_section}</small>}
             {errors.student_section && <small style={{ color: '#991b1b' }}>{errors.student_section}</small>}
           </div>
 

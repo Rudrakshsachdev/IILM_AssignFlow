@@ -11,6 +11,7 @@ from app.models.course import Course
 from app.models.section import Section
 from app.models.subject import Subject
 from app.models.faculty_mapping import FacultyMapping
+from app.models.users import User
 
 
 def get_all_courses(db: Session) -> List[Course]:
@@ -57,6 +58,36 @@ def get_faculty_mappings(db: Session, faculty_id: int) -> List[dict]:
     return result
 
 
+def get_all_faculty_mappings(db: Session) -> List[dict]:
+    """Get all subject-section mappings across all faculties. (Admin use)"""
+    mappings = db.query(FacultyMapping).all()
+
+    result = []
+    for m in mappings:
+        subject = db.query(Subject).filter(Subject.id == m.subject_id).first()
+        section = db.query(Section).filter(Section.id == m.section_id).first()
+        course = db.query(Course).filter(Course.id == section.course_id).first() if section else None
+        user = db.query(User).filter(User.id == m.faculty_id).first()
+
+        section_label = ""
+        if section and course:
+            section_label = f"{course.name} - Year {section.year} - Section {section.section_name}"
+
+        result.append({
+            "id": m.id,
+            "faculty_id": m.faculty_id,
+            "faculty_name": user.name if user else "Unknown",
+            "faculty_email": user.email if user else "Unknown",
+            "subject_id": m.subject_id,
+            "section_id": m.section_id,
+            "subject_name": subject.name if subject else "",
+            "section_label": section_label,
+            "created_at": m.created_at,
+        })
+
+    return result
+
+
 def validate_faculty_mapping(db: Session, faculty_id: int, subject_id: int, section_id: int) -> bool:
     """Check if a faculty member is mapped to the given subject+section."""
     mapping = db.query(FacultyMapping).filter(
@@ -89,6 +120,19 @@ def create_faculty_mapping(db: Session, faculty_id: int, subject_id: int, sectio
     db.commit()
     db.refresh(mapping)
     return mapping
+
+
+def delete_faculty_mapping(db: Session, mapping_id: int) -> bool:
+    """Delete a faculty mapping (admin use)."""
+    mapping = db.query(FacultyMapping).filter(FacultyMapping.id == mapping_id).first()
+    if not mapping:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Faculty mapping not found."
+        )
+    db.delete(mapping)
+    db.commit()
+    return True
 
 
 def build_section_label(db: Session, section_id: int) -> str:

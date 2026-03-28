@@ -13,7 +13,7 @@ from app.models.course import Course
 from app.models.section import Section
 from app.models.subject import Subject
 from app.models.faculty_mapping import FacultyMapping
-from app.api.routes import auth, dashboards, student, faculty, assignment, submission, academic
+from app.api.routes import auth, dashboards, student, faculty, assignment, submission, academic, admin
 
 # Initialize DB tables
 Base.metadata.create_all(bind=engine)
@@ -37,6 +37,7 @@ app.include_router(faculty.router, prefix="/api/v1/faculty", tags=["faculty"])
 app.include_router(assignment.router, prefix="/api/v1/assignments", tags=["assignments"])
 app.include_router(submission.router, prefix="/api/v1/submissions", tags=["submissions"])
 app.include_router(academic.router, prefix="/api/v1/academic", tags=["academic"])
+app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
 
 
 @app.get("/")

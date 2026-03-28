@@ -22,7 +22,9 @@ from app.services.academic_service import (
     get_all_sections,
     get_all_subjects,
     get_faculty_mappings,
+    get_all_faculty_mappings,
     create_faculty_mapping,
+    delete_faculty_mapping,
     seed_academic_data,
     build_section_label,
 )
@@ -115,3 +117,23 @@ def seed_data(
 ):
     """Seed academic data (admin only). Idempotent."""
     return seed_academic_data(db)
+
+
+@router.get("/admin/faculty-mappings")
+def get_all_mappings(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(allow_admin),
+):
+    """Get all subject-section mappings across the system (admin only)."""
+    return get_all_faculty_mappings(db)
+
+
+@router.delete("/admin/faculty-mappings/{mapping_id}", status_code=status.HTTP_200_OK)
+def delete_mapping(
+    mapping_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(allow_admin),
+):
+    """Delete a faculty mapping by ID (admin only)."""
+    success = delete_faculty_mapping(db, mapping_id=mapping_id)
+    return {"message": "Mapping deleted successfully."}

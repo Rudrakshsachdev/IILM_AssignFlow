@@ -81,6 +81,7 @@ const AuthForm = ({ type }) => {
                   <select name="role" value={formData.role} onChange={handleChange}>
                     <option value="student">Student</option>
                     <option value="faculty">Faculty</option>
+                    <option value="admin">Admin</option>
                   </select>
                 </div>
                 <div className={styles.formGroup}>
