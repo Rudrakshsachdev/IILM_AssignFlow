@@ -6,7 +6,8 @@ from app.db.base import Base
 # Import models so Base knows about them before create_all
 from app.models.users import User
 from app.models.students import Student
-from app.api.routes import auth, dashboards, student
+from app.models.faculties import Faculty
+from app.api.routes import auth, dashboards, student, faculty
 
 # Initialize DB tables
 Base.metadata.create_all(bind=engine)
@@ -26,6 +27,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(dashboards.router, prefix="/api/v1/dashboards", tags=["dashboards"])
 app.include_router(student.router, prefix="/api/v1/student", tags=["student"])
+app.include_router(faculty.router, prefix="/api/v1/faculty", tags=["faculty"])
 
 
 @app.get("/")

@@ -111,3 +111,13 @@ button, .btn-primary, .btn-secondary {
 
 .fade-in { animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
 
+@media (max-width: 480px) {
+  button, .btn-primary, .btn-secondary {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  .btn-large {
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+  }
+}

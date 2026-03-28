@@ -13,4 +13,7 @@ class User(Base):
     school = Column(String, nullable=True)
 
     # One-to-one relationship with Student profile
-    student = relationship("Student", back_populates="user", uselist=False)
+    student = relationship("Student", back_populates="user", uselist=False)
+
+    # One-to-one relationship with Faculty profile
+    faculty = relationship("Faculty", back_populates="user", uselist=False)

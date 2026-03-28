@@ -81,3 +81,38 @@
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@media (max-width: 768px) {
+  .heroSection {
+    flex-direction: column;
+    text-align: center;
+    padding: 3rem 1.5rem;
+    gap: 2rem;
+  }
+  .heroTitle {
+    font-size: 2.25rem;
+  }
+  .heroSubtitle {
+    font-size: 1.05rem;
+    margin: 0 auto 2rem auto;
+  }
+  .heroButtons {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .heroVisual {
+    height: 320px;
+    width: 100%;
+    margin-top: 1rem;
+  }
+  .decorativeCard1 {
+    width: 220px;
+    left: -10px;
+    top: 5%;
+  }
+  .decorativeCard2 {
+    width: 220px;
+    right: -10px;
+    bottom: 5%;
+  }
+}
