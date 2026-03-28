@@ -11,6 +11,7 @@ import Profile from '../pages/Profile/Profile';
 import FacultyProfile from '../pages/Profile/FacultyProfile';
 import ResetPassword from '../pages/Auth/ResetPassword';
 import CreateAssignment from '../pages/FacultyDashboard/CreateAssignment';
+import FacultySubmissionReview from '../pages/FacultyDashboard/FacultySubmissionReview';
 import AssignmentDetails from '../pages/StudentDashboard/AssignmentDetails';
 import StudentAssignments from '../pages/StudentDashboard/StudentAssignments';
 import ForgotPassword from '../pages/Auth/ForgotPassword';
@@ -88,6 +89,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={['faculty']}>
             <CreateAssignment />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/faculty-dashboard/assignment/:id/submissions"
+        element={
+          <ProtectedRoute allowedRoles={['faculty']}>
+            <FacultySubmissionReview />
           </ProtectedRoute>
         }
       />

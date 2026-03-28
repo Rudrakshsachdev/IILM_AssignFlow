@@ -76,3 +76,55 @@ def get_student_submissions(db: Session, student_id: int) -> List[Submission]:
 
 def get_assignment_submissions(db: Session, assignment_id: int) -> List[Submission]:
     return db.query(Submission).filter(Submission.assignment_id == assignment_id).all()
+
+
+def get_assignment_submissions_with_student(db: Session, assignment_id: int, faculty_id: int) -> List[dict]:
+    """
+    Fetch all submissions for a specific assignment, including the student's details.
+    Ensures that the faculty requesting this owns the assignment.
+    """
+    from app.models.students import Student
+    
+    # Verify assignment exists and is owned by the faculty
+    assignment = db.query(Assignment).filter(
+        Assignment.id == assignment_id,
+        Assignment.faculty_id == faculty_id
+    ).first()
+    
+    if not assignment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Assignment not found or you don't have permission to view it."
+        )
+        
+    # Join Submission and Student tables using the student_id (which maps to User.id)
+    results = db.query(Submission, Student).filter(
+        Submission.assignment_id == assignment_id
+    ).join(
+        Student, Submission.student_id == Student.user_id
+    ).all()
+    
+    formatted_results = []
+    for sub, student in results:
+        sub_dict = {
+            "id": sub.id,
+            "assignment_id": sub.assignment_id,
+            "student_id": sub.student_id,
+            "file_url": sub.file_url,
+            "status": sub.status,
+            "marks": sub.marks,
+            "feedback": sub.feedback,
+            "submitted_at": sub.submitted_at,
+            "created_at": sub.created_at,
+            "updated_at": sub.updated_at,
+            "student_name": student.student_name,
+            "student_urn": student.student_urn,
+            "student_course": student.student_course,
+            "student_branch": student.student_branch,
+            "student_year": student.student_year,
+            "student_sem": student.student_sem,
+            "student_section": student.student_section
+        }
+        formatted_results.append(sub_dict)
+        
+    return formatted_results

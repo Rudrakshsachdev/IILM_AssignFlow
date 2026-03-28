@@ -26,3 +26,15 @@ class SubmissionResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class SubmissionWithStudentResponse(SubmissionResponse):
+    student_name: str
+    student_urn: str
+    student_course: str
+    student_branch: str
+    student_year: int
+    student_sem: int
+    student_section: str
+
+    class Config:
+        from_attributes = True

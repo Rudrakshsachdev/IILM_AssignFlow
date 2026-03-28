@@ -11,6 +11,7 @@ from app.db.session import get_db
 from app.models.users import User
 from app.api.deps import RoleChecker
 from app.schemas.assignment import AssignmentCreate, AssignmentUpdate, AssignmentResponse
+from app.schemas.submission import SubmissionWithStudentResponse
 from app.services.assignment_service import (
     create_assignment,
     get_faculty_assignments,
@@ -23,6 +24,7 @@ from app.services.assignment_service import (
 )
 from app.utils.cloudinary import upload_assignment_file
 from app.models.students import Student
+from app.services.submission_service import get_assignment_submissions_with_student
 
 router = APIRouter()
 
@@ -71,6 +73,16 @@ def get_one(
     """Get a single assignment by ID."""
     assignment = get_assignment_by_id(db=db, assignment_id=assignment_id, faculty_id=current_user.id)
     return enrich_assignment_response(db, assignment)
+
+
+@router.get("/{assignment_id}/submissions", response_model=List[SubmissionWithStudentResponse])
+def get_submissions(
+    assignment_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(allow_faculty),
+):
+    """Get all submissions for an assignment owned by the faculty."""
+    return get_assignment_submissions_with_student(db=db, assignment_id=assignment_id, faculty_id=current_user.id)
 
 
 @router.put("/{assignment_id}", response_model=AssignmentResponse)

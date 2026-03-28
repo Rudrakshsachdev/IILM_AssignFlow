@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Trophy, Calendar, Clock, Paperclip, Edit2, Trash2, ArrowRight } from 'lucide-react';
+import { BookOpen, Trophy, Calendar, Clock, Paperclip, Edit2, Trash2, ArrowRight, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import styles from './AssignmentCard.module.css';
 
@@ -105,13 +105,22 @@ const AssignmentCard = ({ assignment, onEdit, onDelete, isStudentView = false })
           </button>
         </div>
       ) : (
-        <div className={styles.cardActions}>
-          <button className="btn-secondary" onClick={() => onEdit(assignment)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-            <Edit2 size={16} /> Edit
+        <div className={styles.cardActions} style={{ flexDirection: 'column' }}>
+          <button 
+            className="btn-primary" 
+            style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}
+            onClick={() => navigate(`/faculty-dashboard/assignment/${assignment.id}/submissions`)}
+          >
+            <Eye size={16} /> View Submissions
           </button>
-          <button className="btn-secondary" onClick={handleDelete} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#dc2626', borderColor: '#fecaca' }}>
-            <Trash2 size={16} /> Delete
-          </button>
+          <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
+            <button className="btn-secondary" onClick={() => onEdit(assignment)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+              <Edit2 size={16} /> Edit
+            </button>
+            <button className="btn-secondary" onClick={handleDelete} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#dc2626', borderColor: '#fecaca' }}>
+              <Trash2 size={16} /> Delete
+            </button>
+          </div>
         </div>
       )}
     </div>
