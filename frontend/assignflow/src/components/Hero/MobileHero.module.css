@@ -1,0 +1,81 @@
+.heroSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 1.5rem 4rem;
+  width: 100%;
+}
+
+.heroContent {
+  width: 100%;
+  animation: slideInUp 0.6s ease backwards;
+}
+
+.heroTitle {
+  font-size: 2.4rem;
+  line-height: 1.25;
+  margin-bottom: 1.25rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+
+.heroSubtitle {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+  line-height: 1.5;
+}
+
+.heroButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.heroButtons a {
+  width: 100%;
+}
+
+.heroVisual {
+  width: 100%;
+  margin-top: 3rem;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  animation: fadeScale 0.8s ease backwards 0.2s;
+}
+
+.mobileCard {
+  width: 100%;
+  max-width: 320px;
+  position: relative;
+  text-align: left;
+}
+
+.statBadge {
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  background: var(--primary-color);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(129, 32, 44, 0.4);
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

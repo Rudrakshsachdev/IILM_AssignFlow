@@ -1,0 +1,76 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  padding: 0.75rem 1rem;
+}
+
+.navContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.navLogo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logoImage {
+  height: 38px;
+  object-fit: contain;
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  color: var(--secondary-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.mobileMenuContainer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mobileMenu {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+}
+
+.navLink {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-main);
+  text-decoration: none;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f1f5f9;
+  text-align: center;
+}
+
+.navLink:hover {
+  color: var(--primary-color);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
