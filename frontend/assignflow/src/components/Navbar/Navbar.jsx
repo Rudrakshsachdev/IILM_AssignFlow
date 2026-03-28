@@ -5,7 +5,7 @@ import logo from '../../assets/iilm-logo.png';
 import styles from './Navbar.module.css';
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, user } = useAuthStore();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -13,17 +13,22 @@ const Navbar = () => {
     navigate('/');
   };
 
+  const dashboardPath = user?.role === 'student' ? '/student-dashboard' : (user?.role === 'faculty' ? '/faculty-dashboard' : (user?.role === 'admin' ? '/admin-dashboard' : '/'));
+  const profilePath = user?.role === 'student' ? '/student-dashboard/profile' : '/faculty-dashboard/profile';
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.navContainer}>
         <Link to="/" className={styles.navLogo}>
           <img src={logo} alt="IILM Logo" className={styles.logoImage} />
+          <span className={styles.logoSeparator}>×</span>
           <span className={styles.logoText}>AssignFlow</span>
         </Link>
         <div className={styles.navLinks}>
           {isAuthenticated ? (
             <>
-              <Link to="/dashboard" className={styles.navLink}>Dashboard</Link>
+              <Link to={dashboardPath} className={styles.navLink}>Dashboard</Link>
+              <Link to={profilePath} className={styles.navLink}>Profile</Link>
               <button onClick={handleLogout} className="btn-primary">Logout</button>
             </>
           ) : (
@@ -35,6 +40,7 @@ const Navbar = () => {
         </div>
       </div>
     </nav>
+
   );
 };
 

@@ -12,17 +12,19 @@
 }
 
 .navContainer {
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1600px; /* Wider container to shift branding more to the left */
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 1rem;
 }
 
 .navLogo {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   text-decoration: none;
   transition: transform 0.2s ease;
 }
@@ -32,16 +34,30 @@
 }
 
 .logoImage {
-  height: 48px; /* Slightly larger logo */
+  height: 44px;
   object-fit: contain;
 }
 
-.logoText {
-  color: var(--secondary-color); /* Use Navy for text */
-  font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+.logoSeparator {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: #94a3b8; /* Subtle slate color */
+  margin: 0 0.25rem;
+  opacity: 0.6;
+  user-select: none;
 }
+
+.logoText {
+  color: var(--secondary-color);
+  font-size: 1.6rem; /* Slightly larger text */
+  font-weight: 850;
+  letter-spacing: -0.75px;
+  background: linear-gradient(135deg, var(--secondary-color) 0%, #1e293b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 
 .navLinks {
   display: flex;

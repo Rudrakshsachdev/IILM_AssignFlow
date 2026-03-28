@@ -8,8 +8,10 @@ import FacultyDashboard from '../pages/FacultyDashboard/FacultyDashboard';
 import AdminDashboard from '../pages/AdminDashboard/AdminDashboard';
 import Unauthorized from '../pages/Unauthorized/Unauthorized';
 import Profile from '../pages/Profile/Profile';
+import FacultyProfile from '../pages/Profile/FacultyProfile';
 
 const AppRoutes = () => {
+
   return (
     <Routes>
       <Route path="/" element={<Hero />} />
@@ -46,15 +48,16 @@ const AppRoutes = () => {
       />
 
       <Route
-        path="/admin-dashboard"
+        path="/faculty-dashboard/profile"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <AdminDashboard />
+          <ProtectedRoute allowedRoles={['faculty']}>
+            <FacultyProfile />
           </ProtectedRoute>
         }
       />
 
       {/* Legacy dashboard fallback */}
+
       <Route path="/dashboard" element={<Navigate to="/" replace />} />
     </Routes>
   );
