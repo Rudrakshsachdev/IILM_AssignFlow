@@ -4,7 +4,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import axios from 'axios';
 import styles from './AuthForm.module.css';
 
-const API_URL = 'http://localhost:8000/api/v1/auth';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const AuthForm = ({ type }) => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'student', school: '' });
