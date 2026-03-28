@@ -34,7 +34,11 @@ const StudentDashboard = () => {
 
       setAssignments(merged);
     } catch (err) {
-      if (err.response?.status !== 401 && err.response?.status !== 403) {
+      if (err.response?.status === 401) {
+        // Auth interceptor handles this
+      } else if (err.response?.status === 403) {
+        setErrorMsg(err.response?.data?.detail || 'Please complete your student profile to view assignments.');
+      } else {
         setErrorMsg('Failed to load dashboard data.');
       }
     } finally {
@@ -62,6 +66,13 @@ const StudentDashboard = () => {
       </header>
 
       <main className={styles.dashboardMain}>
+        {errorMsg && (
+          <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '2rem', borderLeft: '4px solid #ef4444' }}>
+            <p style={{ color: '#ef4444', margin: 0 }}>
+              <strong>Notice:</strong> {errorMsg}
+            </p>
+          </div>
+        )}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
           <Link to="/student-dashboard/profile" style={{ textDecoration: 'none' }}>
             <div className={`glass-card hover-lift ${styles.card}`} style={{ height: '100%' }}>

@@ -41,7 +41,9 @@ const AssignmentDetails = () => {
       }
     } catch (err) {
       if (err.response?.status === 404) {
-        setError('Assignment not found or it is no longer available.');
+        setError(err.response?.data?.detail || 'Assignment not found or it is no longer available.');
+      } else if (err.response?.status === 403) {
+        setError(err.response?.data?.detail || 'Please complete your student profile to view assignments.');
       } else {
         setError('Failed to load assignment details.');
       }

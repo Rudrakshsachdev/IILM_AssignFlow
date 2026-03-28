@@ -112,31 +112,37 @@ def delete_assignment(db: Session, assignment_id: int, faculty_id: int) -> None:
 
 def get_student_assignments(
     db: Session,
+    section_id: int,
     subject: str = None,
     sort_by: str = "deadline",
     sort_order: str = "asc",
-    section_id: int = None,
 ) -> list[Assignment]:
-    """Get all published assignments for students, optionally filtered by section."""
-    query = db.query(Assignment).filter(Assignment.status == "published")
+    """
+    Get all published assignments visible to a student in a specific section.
+    
+    Strict backend filtering:
+    - Only returns assignments explicitly targeted at the student's section_id.
+    - If section_id is None/0 (student has no profile), returns an empty list.
+    - Does NOT show un-scoped assignments (section_id == NULL) to prevent data leaks.
+    """
+    if not section_id:
+        return []  # No profile / no section = no assignments
 
-    # If section_id is provided, only show assignments for that section
-    if section_id:
-        query = query.filter(
-            (Assignment.section_id == section_id) | (Assignment.section_id == None)
-        )
+    query = db.query(Assignment).filter(
+        Assignment.status == "published",
+        Assignment.section_id == section_id,
+    )
 
     if subject:
         query = query.filter(Assignment.subject.ilike(f"%{subject}%"))
 
-    if sort_by == "deadline":
-        order_col = Assignment.deadline
-    elif sort_by == "created_at":
-        order_col = Assignment.created_at
-    elif sort_by == "title":
-        order_col = Assignment.title
-    else:
-        order_col = Assignment.deadline
+    # Sorting
+    sort_columns = {
+        "deadline": Assignment.deadline,
+        "created_at": Assignment.created_at,
+        "title": Assignment.title,
+    }
+    order_col = sort_columns.get(sort_by, Assignment.deadline)
 
     if sort_order == "desc":
         query = query.order_by(order_col.desc())
@@ -146,17 +152,29 @@ def get_student_assignments(
     return query.all()
 
 
-def get_student_assignment_by_id(db: Session, assignment_id: int) -> Assignment:
-    """Get a single published assignment by ID for a student view."""
+def get_student_assignment_by_id(db: Session, assignment_id: int, section_id: int) -> Assignment:
+    """
+    Get a single published assignment by ID — with mandatory section-scoping.
+    
+    Security: A student can ONLY view an assignment if it belongs to their section.
+    This prevents manual API access (e.g. /student/5) from leaking other sections' data.
+    """
+    if not section_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Complete your student profile to view assignments."
+        )
+
     assignment = db.query(Assignment).filter(
-        Assignment.id == assignment_id, 
-        Assignment.status == "published"
+        Assignment.id == assignment_id,
+        Assignment.status == "published",
+        Assignment.section_id == section_id,
     ).first()
 
     if not assignment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Assignment not found or not published yet."
+            detail="Assignment not found, not published, or not assigned to your section."
         )
 
     return assignment

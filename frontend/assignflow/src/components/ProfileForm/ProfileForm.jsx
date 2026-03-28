@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef } from 'react';
 import { uploadProfilePicOnly } from '../../api/student';
 import { getCourses, getSections } from '../../api/academic';
 import styles from '../../pages/Profile/Profile.module.css';
@@ -85,9 +86,9 @@ const ProfileForm = ({ existingData, onSubmit, isLoading, isEditMode, onCancel }
     const newErrors = {};
     if (!formData.student_name.trim()) newErrors.student_name = 'Name is required';
     if (!formData.student_urn.trim()) newErrors.student_urn = 'URN is required';
-    if (!formData.student_course.trim()) newErrors.student_course = 'Course is required';
+    if (!formData.student_course.trim()) newErrors.student_course = 'Course is required — select from dropdown';
     if (!formData.student_branch.trim()) newErrors.student_branch = 'Branch is required';
-    if (!formData.student_section.trim()) newErrors.student_section = 'Section is required';
+    if (!formData.section_id) newErrors.student_section = 'Section is required — select course first, then section';
     if (!formData.student_mobile.trim() || formData.student_mobile.length < 10)
       newErrors.student_mobile = 'Valid mobile number is required';
     if (formData.student_year < 1 || formData.student_year > 5)

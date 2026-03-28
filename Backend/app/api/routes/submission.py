@@ -29,8 +29,20 @@ def create_submission(
     db: Session = Depends(get_db),
     current_user: User = Depends(allow_student),
 ):
-    """Submit an assignment."""
-    submission = submit_assignment(db=db, student_id=current_user.id, assignment_id=data.assignment_id, file_url=data.file_url)
+    """Submit an assignment — with section-scoped access control."""
+    from app.models.students import Student
+
+    # Resolve student's section for access control
+    student_profile = db.query(Student).filter(Student.user_id == current_user.id).first()
+    section_id = student_profile.section_id if student_profile else None
+
+    submission = submit_assignment(
+        db=db,
+        student_id=current_user.id,
+        assignment_id=data.assignment_id,
+        file_url=data.file_url,
+        section_id=section_id
+    )
     return submission
 
 

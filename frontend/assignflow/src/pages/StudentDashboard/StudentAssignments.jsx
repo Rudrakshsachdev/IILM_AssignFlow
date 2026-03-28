@@ -33,7 +33,11 @@ const StudentAssignments = () => {
 
       setAssignments(merged);
     } catch (err) {
-      if (err.response?.status !== 401 && err.response?.status !== 403) {
+      if (err.response?.status === 401) {
+        // Auth interceptor handles this
+      } else if (err.response?.status === 403) {
+        setErrorMsg(err.response?.data?.detail || 'Please complete your student profile to view assignments.');
+      } else {
         setErrorMsg('Failed to load assignments.');
       }
     } finally {
@@ -58,7 +62,16 @@ const StudentAssignments = () => {
         <p className="text-muted" style={{ marginTop: '0.5rem' }}>View your pending and completed coursework.</p>
       </div>
 
-      {errorMsg && <div className="errorMsg" style={{ background: '#fee2e2', color: '#991b1b', padding: '1rem', borderRadius: '8px', marginBottom: '1rem' }}>{errorMsg}</div>}
+      {errorMsg && (
+        <div className={`glass-card`} style={{ padding: '2rem', textAlign: 'center', marginBottom: '1.5rem', borderLeft: '4px solid var(--secondary-color)' }}>
+          <p style={{ color: '#ef4444', fontSize: '1.1rem', marginBottom: '1rem' }}>{errorMsg}</p>
+          {errorMsg.toLowerCase().includes('profile') && (
+            <button className="btn-primary" onClick={() => navigate('/student-dashboard/profile')} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+              Go to Profile Settings
+            </button>
+          )}
+        </div>
+      )}
 
       {loading ? (
         <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>

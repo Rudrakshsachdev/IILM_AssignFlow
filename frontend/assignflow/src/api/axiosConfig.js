@@ -30,19 +30,20 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle 401/403 errors globally
+// Response interceptor to handle 401 errors globally
 api.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      // If unauthorized, gracefully log the user out
+    if (error.response && error.response.status === 401) {
+      // If unauthorized (token expired/invalid), gracefully log the user out
       useAuthStore.getState().logout();
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
     }
+    // Let individual components handle 403 (Forbidden/Incomplete Profile)
     return Promise.reject(error);
   }
 );

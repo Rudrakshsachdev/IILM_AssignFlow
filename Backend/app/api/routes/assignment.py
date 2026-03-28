@@ -130,6 +130,23 @@ def upload_file(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+def _resolve_student_section(db: Session, user_id: int) -> int:
+    """
+    Securely resolve the student's section_id from their profile.
+    Raises 403 if the student hasn't created a profile with a section.
+    This is the single source of truth for section-based access control.
+    """
+    student_profile = db.query(Student).filter(Student.user_id == user_id).first()
+
+    if not student_profile or not student_profile.section_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Complete your student profile (with course and section) to view assignments."
+        )
+
+    return student_profile.section_id
+
+
 @router.get("/student/available", response_model=List[AssignmentResponse])
 def get_all_student(
     subject: Optional[str] = Query(None, description="Filter by subject"),
@@ -138,17 +155,18 @@ def get_all_student(
     db: Session = Depends(get_db),
     current_user: User = Depends(allow_student),
 ):
-    """Get all published assignments for students, filtered by their section."""
-    # Look up the student's section_id from their profile
-    student_profile = db.query(Student).filter(Student.user_id == current_user.id).first()
-    student_section_id = student_profile.section_id if student_profile else None
+    """
+    Get all published assignments for students, strictly filtered by their section.
+    Backend-enforced: students can ONLY see assignments targeted at their section.
+    """
+    section_id = _resolve_student_section(db, current_user.id)
 
     assignments = get_student_assignments(
         db=db,
+        section_id=section_id,
         subject=subject,
         sort_by=sort_by,
         sort_order=sort_order,
-        section_id=student_section_id,
     )
     return [enrich_assignment_response(db, a) for a in assignments]
 
@@ -159,6 +177,10 @@ def get_one_student(
     db: Session = Depends(get_db),
     current_user: User = Depends(allow_student),
 ):
-    """Get a single assignment by ID for students."""
-    assignment = get_student_assignment_by_id(db=db, assignment_id=assignment_id)
+    """
+    Get a single assignment by ID for students — with section-scoped access control.
+    A student can ONLY access this assignment if it is published AND assigned to their section.
+    """
+    section_id = _resolve_student_section(db, current_user.id)
+    assignment = get_student_assignment_by_id(db=db, assignment_id=assignment_id, section_id=section_id)
     return enrich_assignment_response(db, assignment)
