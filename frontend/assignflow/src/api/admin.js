@@ -57,3 +57,14 @@ export const uploadAllowedUsersCsv = async (file) => {
   });
   return res.data;
 };
+
+// Monitoring APIs
+export const getSystemSubmissions = async (filters = {}) => {
+  const res = await api.get('/admin/submissions', { params: filters });
+  return res.data;
+};
+
+export const getSystemAssignments = async (filters = {}) => {
+  const res = await api.get('/admin/assignments', { params: filters });
+  return res.data;
+};

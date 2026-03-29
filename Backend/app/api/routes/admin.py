@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, File, UploadFile, HTTPException
 from sqlalchemy.orm import Session
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 from app.db.session import get_db
 from app.api.deps import get_current_user, RoleChecker
@@ -11,7 +11,9 @@ from app.models.faculty_mapping import FacultyMapping
 from app.models.allowed_users import AllowedUser
 from app.schemas.users import UserOut
 from app.schemas.allowed_users import AllowedUserCreate, AllowedUserUpdate, AllowedUserResponse
+from app.schemas.admin_monitoring import AdminSubmissionResponse, AdminAssignmentResponse
 from app.services.allowed_users_service import add_allowed_user, update_allowed_user, delete_allowed_user, list_allowed_users, process_csv_upload
+from app.services.admin_monitoring_service import get_all_submissions, get_all_assignments
 
 router = APIRouter()
 
@@ -87,3 +89,28 @@ async def upload_allowed_users_csv(file: UploadFile = File(...), db: Session = D
         
     result = process_csv_upload(db, decoded_content)
     return result
+
+@router.get("/submissions", response_model=List[AdminSubmissionResponse])
+def get_submissions_view(
+    year: Optional[int] = None,
+    course: Optional[str] = None,
+    section: Optional[str] = None,
+    subject: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(allow_admin)
+):
+    """Admin view for all student submissions with filtering."""
+    return get_all_submissions(db, year, course, section, subject)
+
+@router.get("/assignments", response_model=List[AdminAssignmentResponse])
+def get_assignments_view(
+    faculty_name: Optional[str] = None,
+    department: Optional[str] = None,
+    subject: Optional[str] = None,
+    section: Optional[str] = None,
+    status: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(allow_admin)
+):
+    """Admin view for all faculty assignments with filtering."""
+    return get_all_assignments(db, faculty_name, department, subject, section, status)

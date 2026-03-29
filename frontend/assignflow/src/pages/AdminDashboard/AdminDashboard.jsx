@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
-import { Users, BookOpen, Layers, Layout, Trash2, Plus, RefreshCw, Settings, ShieldCheck, Upload } from 'lucide-react';
+import { Users, BookOpen, Layers, Layout, Trash2, Plus, RefreshCw, Settings, ShieldCheck, Upload, FileText, Briefcase } from 'lucide-react';
 import { getAdminStats, getAllFaculties, getAllMappings, deleteMapping, getAllowedUsers, createAllowedUser, deleteAllowedUser, uploadAllowedUsersCsv } from '../../api/admin';
 import { getCourses, getSections, getSubjects, seedAcademicData } from '../../api/academic';
 import { createFacultyMapping } from '../../api/academic';
+import AdminSubmissionsTab from './components/AdminSubmissionsTab';
+import AdminAssignmentsTab from './components/AdminAssignmentsTab';
 import styles from './AdminDashboard.module.css';
 
 const AdminDashboard = () => {
@@ -264,6 +266,18 @@ const AdminDashboard = () => {
           <Layers size={18} /> Faculty Mappings
         </button>
         <button
+          className={`${styles.tabBtn} ${activeTab === 'submissions' ? styles.active : ''}`}
+          onClick={() => handleTabChange('submissions')}
+        >
+          <FileText size={18} /> Student Submissions
+        </button>
+        <button
+          className={`${styles.tabBtn} ${activeTab === 'assignments' ? styles.active : ''}`}
+          onClick={() => handleTabChange('assignments')}
+        >
+          <Briefcase size={18} /> Faculty Assignments
+        </button>
+        <button
           className={`${styles.tabBtn} ${activeTab === 'whitelist' ? styles.active : ''}`}
           onClick={() => handleTabChange('whitelist')}
         >
@@ -410,6 +424,10 @@ const AdminDashboard = () => {
           </div>
         </div>
       )}
+
+      {activeTab === 'submissions' && <AdminSubmissionsTab />}
+      
+      {activeTab === 'assignments' && <AdminAssignmentsTab />}
 
       {activeTab === 'whitelist' && (
         <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
