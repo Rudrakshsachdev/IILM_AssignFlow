@@ -16,7 +16,7 @@ from app.services.faculty_service import (
     update_faculty_profile,
     update_profile_pic_url,
 )
-from app.services.submission_service import evaluate_submission
+from app.services.submission_service import evaluate_submission, get_faculty_stats
 from app.schemas.submission import SubmissionResponse, SubmissionEvaluateRequest
 from app.utils.cloudinary import upload_profile_pic
 
@@ -121,3 +121,12 @@ def evaluate_student_submission(
         faculty_id=current_user.id,
         data=data
     )
+
+
+@router.get("/stats")
+def get_dashboard_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(allow_faculty),
+):
+    """Aggregate statistics for the faculty dashboard."""
+    return get_faculty_stats(db=db, faculty_id=current_user.id)

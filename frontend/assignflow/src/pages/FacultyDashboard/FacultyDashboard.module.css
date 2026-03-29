@@ -1,174 +1,203 @@
 .dashboardContainer {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 5%;
   width: 100%;
 }
 
 .dashboardHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   margin-bottom: 2.5rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .headerLeft h1 {
   font-size: 2.2rem;
   color: var(--secondary-color);
   font-weight: 800;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.2rem;
 }
 
 .headerLeft p {
   color: var(--text-muted);
   font-size: 1rem;
+  font-weight: 500;
 }
 
 .headerRight {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   align-items: center;
 }
 
-/* Toolbar: search, filter, sort */
+.dashboardMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* Stats Section */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.statCardModule {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.statIconWrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.statTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-top: 0.2rem;
+}
+
+.statSubtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+/* Chart Section */
+.chartCard {
+  padding: 2rem;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.chartHeader {
+  margin-bottom: 1rem;
+}
+
+.chartHeader h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--secondary-color);
+  margin-bottom: 0.3rem;
+}
+
+.chartHeader p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.chartWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.noData {
+  color: var(--text-muted);
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Toolbar & Grid */
 .toolbar {
   display: flex;
   gap: 1rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
   align-items: center;
-  animation: slideUp 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
 }
 
 .searchInput {
-  flex: 1;
-  min-width: 220px;
-  padding: 0.7rem 1rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  transition: var(--transition);
-  background: white;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 8px;
+  width: 100%;
+  transition: border-color 0.2s;
 }
 
 .searchInput:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(129, 32, 44, 0.1);
 }
 
 .filterSelect {
-  padding: 0.7rem 1rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  font-size: 0.95rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 8px;
   background: white;
-  cursor: pointer;
-  transition: var(--transition);
+  min-width: 150px;
 }
 
-.filterSelect:focus {
-  outline: none;
-  border-color: var(--primary-color);
-}
-
-/* Stats bar */
-.statsBar {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  animation: slideUp 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.statCard {
-  flex: 1;
-  padding: 1.25rem 1.5rem;
-  text-align: center;
-}
-
-.statNumber {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: var(--primary-color);
-}
-
-.statLabel {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: 0.25rem;
-}
-
-/* Assignment grid */
 .assignmentGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
-  animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Empty state */
-.emptyState {
+/* Messaging */
+.successMsg, .errorMsg {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
   text-align: center;
-  padding: 4rem 2rem;
-  animation: slideUp 0.8s ease;
 }
 
-.emptyIcon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-}
-
-.emptyState h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.75rem;
-  color: var(--secondary-color);
-}
-
-.emptyState p {
-  color: var(--text-muted);
-  margin-bottom: 2rem;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Messages */
 .successMsg {
   background: #dcfce7;
   color: #166534;
-  padding: 0.85rem 1.25rem;
-  border-radius: 10px;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  font-weight: 500;
   border: 1px solid #bbf7d0;
-  animation: slideUp 0.3s ease;
 }
 
 .errorMsg {
   background: #fee2e2;
-  color: #b91c1c;
-  padding: 0.85rem 1.25rem;
-  border-radius: 10px;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  font-weight: 500;
+  color: #991b1b;
   border: 1px solid #fecaca;
-  animation: slideUp 0.3s ease;
 }
 
 /* Spinner */
 .spinner {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 0.5rem;
-  padding: 4rem 0;
+  padding: 3rem;
 }
 
 .spinnerDot {
@@ -187,34 +216,16 @@
   40% { transform: scale(1); }
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+@media (max-width: 1024px) {
+  .headerRight {
+    flex-wrap: wrap;
+  }
 }
 
 @media (max-width: 768px) {
   .dashboardHeader {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
-  }
-  .headerRight {
-    width: 100%;
-  }
-  .headerRight button {
-    flex: 1;
-  }
-  .statsBar {
-    flex-direction: column;
-  }
-  .assignmentGrid {
-    grid-template-columns: 1fr;
-  }
-  .toolbar {
-    flex-direction: column;
-  }
-  .searchInput {
-    min-width: unset;
-    width: 100%;
+    gap: 1.5rem;
   }
 }

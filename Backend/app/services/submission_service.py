@@ -199,3 +199,26 @@ def evaluate_submission(db: Session, submission_id: str, faculty_id: int, data: 
     db.commit()
     db.refresh(submission)
     return submission
+
+
+def get_faculty_stats(db: Session, faculty_id: int) -> dict:
+    """
+    Calculate aggregate statistics for a faculty member.
+    """
+    # Total assignments created by this faculty
+    total_assignments = db.query(Assignment).filter(Assignment.faculty_id == faculty_id).count()
+    
+    # Submissions received for all those assignments
+    submissions_query = db.query(Submission).join(
+        Assignment, Submission.assignment_id == Assignment.id
+    ).filter(Assignment.faculty_id == faculty_id)
+    
+    total_submissions = submissions_query.count()
+    evaluated_submissions = submissions_query.filter(Submission.status == 'reviewed').count()
+    
+    return {
+        "total_assignments": total_assignments,
+        "total_submissions": total_submissions,
+        "evaluated_submissions": evaluated_submissions,
+        "pending_evaluations": total_submissions - evaluated_submissions
+    }

@@ -42,3 +42,8 @@ export const uploadAndUpdateFacultyPic = async (file) => {
   });
   return res.data; // Full FacultyResponse
 };
+
+export const getFacultyStats = async () => {
+  const res = await api.get('/faculty/stats');
+  return res.data;
+};

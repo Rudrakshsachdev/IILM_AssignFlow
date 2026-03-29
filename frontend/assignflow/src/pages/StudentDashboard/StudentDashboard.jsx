@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { getStudentAssignments } from '../../api/assignment';
 import { getStudentSubmissions } from '../../api/student';
-import StatCard from './components/StatCard';
+import StatCard from '../../components/ui/StatCard';
 import DashboardChart from './components/DashboardChart';
 import styles from './StudentDashboard.module.css';
 
