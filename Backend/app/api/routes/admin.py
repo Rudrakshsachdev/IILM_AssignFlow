@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile, HTTPException
 from sqlalchemy.orm import Session
 from typing import Dict, Any, List
 
@@ -11,7 +11,7 @@ from app.models.faculty_mapping import FacultyMapping
 from app.models.allowed_users import AllowedUser
 from app.schemas.users import UserOut
 from app.schemas.allowed_users import AllowedUserCreate, AllowedUserUpdate, AllowedUserResponse
-from app.services.allowed_users_service import add_allowed_user, update_allowed_user, delete_allowed_user, list_allowed_users
+from app.services.allowed_users_service import add_allowed_user, update_allowed_user, delete_allowed_user, list_allowed_users, process_csv_upload
 
 router = APIRouter()
 
@@ -72,3 +72,18 @@ def remove_allowed_user(user_id: str, db: Session = Depends(get_db), current_use
     """Remove a user from the whitelist entirely."""
     delete_allowed_user(db, user_id)
     return None
+
+@router.post("/allowed-users/upload-csv", response_model=Dict[str, int])
+async def upload_allowed_users_csv(file: UploadFile = File(...), db: Session = Depends(get_db), current_user: User = Depends(allow_admin)):
+    """Upload a CSV file containing 'email' and 'role' to bulk add whitelisted users."""
+    if not file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail="Only CSV files are accepted.")
+        
+    content = await file.read()
+    try:
+        decoded_content = content.decode('utf-8')
+    except UnicodeDecodeError:
+        raise HTTPException(status_code=400, detail="File encoding issue. Please ensure the CSV is UTF-8 encoded.")
+        
+    result = process_csv_upload(db, decoded_content)
+    return result

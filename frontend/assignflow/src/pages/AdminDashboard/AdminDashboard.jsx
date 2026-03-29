@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
-import { Users, BookOpen, Layers, Layout, Trash2, Plus, RefreshCw, Settings } from 'lucide-react';
-import { getAdminStats, getAllFaculties, getAllMappings, deleteMapping } from '../../api/admin';
+import { Users, BookOpen, Layers, Layout, Trash2, Plus, RefreshCw, Settings, ShieldCheck, Upload } from 'lucide-react';
+import { getAdminStats, getAllFaculties, getAllMappings, deleteMapping, getAllowedUsers, createAllowedUser, deleteAllowedUser, uploadAllowedUsersCsv } from '../../api/admin';
 import { getCourses, getSections, getSubjects, seedAcademicData } from '../../api/academic';
 import { createFacultyMapping } from '../../api/academic';
 import styles from './AdminDashboard.module.css'; // We will create this
@@ -18,6 +18,7 @@ const AdminDashboard = () => {
   const [courses, setCourses] = useState([]);
   const [sections, setSections] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [allowedUsers, setAllowedUsers] = useState([]);
 
   // UI States
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,9 @@ const AdminDashboard = () => {
     section_id: '',
     subject_id: ''
   });
+  
+  const [whitelistForm, setWhitelistForm] = useState({ email: '', role: 'student' });
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const showSuccess = (msg) => {
     setSuccessMsg(msg);
@@ -46,18 +50,20 @@ const AdminDashboard = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [statsData, facultyData, mappingData, courseData, subjectData] = await Promise.all([
+      const [statsData, facultyData, mappingData, courseData, subjectData, allowedUsersData] = await Promise.all([
         getAdminStats(),
         getAllFaculties(),
         getAllMappings(),
         getCourses(),
-        getSubjects()
+        getSubjects(),
+        getAllowedUsers()
       ]);
       setStats(statsData);
       setFaculties(facultyData);
       setMappings(mappingData);
       setCourses(courseData);
       setSubjects(subjectData);
+      setAllowedUsers(allowedUsersData);
     } catch (err) {
       showError('Failed to load dashboard data.');
     } finally {
@@ -133,6 +139,63 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleWhitelistFormChange = (e) => {
+    const { name, value } = e.target;
+    setWhitelistForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCreateAllowedUser = async (e) => {
+    e.preventDefault();
+    if (!whitelistForm.email || !whitelistForm.role) return;
+    
+    setActionLoading(true);
+    try {
+      await createAllowedUser({ email: whitelistForm.email, role: whitelistForm.role });
+      showSuccess(`User ${whitelistForm.email} whitelisted as ${whitelistForm.role}.`);
+      setWhitelistForm({ email: '', role: 'student' });
+      const newAllowed = await getAllowedUsers();
+      setAllowedUsers(newAllowed);
+    } catch (err) {
+      showError(err.response?.data?.detail || 'Failed to whitelist user.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteAllowedUser = async (id) => {
+    if (!window.confirm("Are you sure you want to remove this user from the whitelist? They will lose access immediately.")) return;
+    try {
+      await deleteAllowedUser(id);
+      showSuccess('User removed from whitelist.');
+      setAllowedUsers(prev => prev.filter(u => u.id !== id));
+    } catch (err) {
+      showError('Failed to remove user from whitelist.');
+    }
+  };
+
+  const handleUploadCSV = async (e) => {
+    e.preventDefault();
+    if (!selectedFile) {
+      showError('Please select a CSV file first.');
+      return;
+    }
+    
+    setActionLoading(true);
+    try {
+      const result = await uploadAllowedUsersCsv(selectedFile);
+      showSuccess(`Upload complete. Added: ${result.added}, Skipped/Duplicates: ${result.skipped}.`);
+      setSelectedFile(null);
+      const fileInput = document.getElementById('csv-upload-input');
+      if (fileInput) fileInput.value = "";
+      const newAllowed = await getAllowedUsers();
+      setAllowedUsers(newAllowed);
+    } catch (err) {
+      showError(err.response?.data?.detail || 'Failed to process CSV file. Make sure it is formatted correctly.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleSeedData = async () => {
     if (!window.confirm("This will initialize/seed the academic data. Are you sure?")) return;
     setActionLoading(true);
@@ -181,6 +244,12 @@ const AdminDashboard = () => {
           onClick={() => setActiveTab('mappings')}
         >
           <Layers size={18} /> Faculty Mappings
+        </button>
+        <button
+          className={`${styles.tabBtn} ${activeTab === 'whitelist' ? styles.active : ''}`}
+          onClick={() => setActiveTab('whitelist')}
+        >
+          <ShieldCheck size={18} /> User Whitelist
         </button>
         <button
           className={`${styles.tabBtn} ${activeTab === 'tools' ? styles.active : ''}`}
@@ -310,6 +379,118 @@ const AdminDashboard = () => {
                             onClick={() => handleDeleteMapping(m.id)}
                             className={styles.deleteBtn}
                             title="Remove Mapping"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'whitelist' && (
+        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          
+          <div className={styles.statsGrid}>
+            <div className="glass-card" style={{ padding: '2rem' }}>
+              <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                <Plus size={24} color="var(--primary-color)" /> Manual Add
+              </h2>
+              <form onSubmit={handleCreateAllowedUser} className={styles.mappingForm}>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup} style={{ flex: 2 }}>
+                    <label>Email Address *</label>
+                    <input type="email" name="email" value={whitelistForm.email} onChange={handleWhitelistFormChange} required placeholder="user@iilm.edu" />
+                  </div>
+                  <div className={styles.formGroup} style={{ flex: 1 }}>
+                    <label>Role *</label>
+                    <select name="role" value={whitelistForm.role} onChange={handleWhitelistFormChange} required>
+                      <option value="student">Student</option>
+                      <option value="faculty">Faculty</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" className="btn-primary" disabled={actionLoading} style={{ marginTop: '1rem' }}>
+                  {actionLoading ? 'Saving...' : 'Whitelist User'}
+                </button>
+              </form>
+            </div>
+
+            <div className="glass-card" style={{ padding: '2rem' }}>
+              <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                <Upload size={24} color="var(--primary-color)" /> Bulk CSV Upload
+              </h2>
+              <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                Upload a CSV file containing <strong>email</strong> and <strong>role</strong> columns.
+              </p>
+              <form onSubmit={handleUploadCSV} className={styles.mappingForm}>
+                <div className={styles.formGroup}>
+                  <label>Select CSV File *</label>
+                  <input type="file" accept=".csv" onChange={(e) => setSelectedFile(e.target.files[0])} required style={{ padding: '0.5rem', background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }} id="csv-upload-input" />
+                </div>
+                <button type="submit" className="btn-secondary" disabled={actionLoading || !selectedFile} style={{ marginTop: '1rem' }}>
+                  {actionLoading ? 'Uploading...' : 'Process Upload'}
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div className="glass-card" style={{ padding: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                <ShieldCheck size={24} color="var(--primary-color)" /> Allowed Users Directory
+              </h2>
+              <button className="btn-secondary" onClick={() => getAllowedUsers().then(setAllowedUsers)} style={{ padding: '0.5rem' }}>
+                <RefreshCw size={18} />
+              </button>
+            </div>
+
+            {allowedUsers.length === 0 ? (
+              <p style={{ color: '#64748b' }}>No users are whitelisted yet.</p>
+            ) : (
+              <div style={{ overflowX: 'auto', maxHeight: '500px' }}>
+                <table className={styles.mappingTable}>
+                  <thead style={{ position: 'sticky', top: 0, background: '#f8fafc', zIndex: 1 }}>
+                    <tr>
+                      <th>Email</th>
+                      <th>Role</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {allowedUsers.map(u => (
+                      <tr key={u.id}>
+                        <td style={{ fontWeight: 500 }}>{u.email}</td>
+                        <td>
+                          <span style={{ 
+                            background: u.role === 'admin' ? '#fee2e2' : u.role === 'faculty' ? '#e0e7ff' : '#dcfce7', 
+                            color: u.role === 'admin' ? '#991b1b' : u.role === 'faculty' ? '#3730a3' : '#166534', 
+                            padding: '0.2rem 0.6rem', 
+                            borderRadius: '4px', 
+                            fontSize: '0.85rem',
+                            textTransform: 'capitalize' 
+                          }}>
+                            {u.role}
+                          </span>
+                        </td>
+                        <td>
+                          {u.is_active ? 
+                            <span style={{ color: '#166534', fontSize: '0.85rem', fontWeight: 600 }}>Active</span> 
+                            : <span style={{ color: '#991b1b', fontSize: '0.85rem', fontWeight: 600 }}>Inactive</span>
+                          }
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => handleDeleteAllowedUser(u.id)}
+                            className={styles.deleteBtn}
+                            title="Remove Access"
                           >
                             <Trash2 size={18} />
                           </button>
