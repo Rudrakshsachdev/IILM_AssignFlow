@@ -43,4 +43,9 @@ export const uploadAndUpdateProfilePic = async (file) => {
   return res.data; // Full StudentResponse
 };
 
+export const getStudentSubmissions = async () => {
+  const res = await api.get('/student/submissions');
+  return res.data;
+};
+
 
