@@ -1,15 +1,33 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Users, BookOpen, Layers, Layout, Trash2, Plus, RefreshCw, Settings, ShieldCheck, Upload } from 'lucide-react';
 import { getAdminStats, getAllFaculties, getAllMappings, deleteMapping, getAllowedUsers, createAllowedUser, deleteAllowedUser, uploadAllowedUsersCsv } from '../../api/admin';
 import { getCourses, getSections, getSubjects, seedAcademicData } from '../../api/academic';
 import { createFacultyMapping } from '../../api/academic';
-import styles from './AdminDashboard.module.css'; // We will create this
+import styles from './AdminDashboard.module.css';
 
 const AdminDashboard = () => {
   const { user } = useAuthStore();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('overview');
+  const queryParams = new URLSearchParams(location.search);
+  const initialTab = queryParams.get('tab') || 'overview';
+
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    const currentParam = new URLSearchParams(location.search).get('tab');
+    if (currentParam && currentParam !== activeTab) {
+      setActiveTab(currentParam);
+    }
+  }, [location.search]);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    navigate(`/admin-dashboard?tab=${tab}`, { replace: true });
+  };
 
   // Data States
   const [stats, setStats] = useState(null);
@@ -235,25 +253,25 @@ const AdminDashboard = () => {
       <div className={styles.tabContainer}>
         <button
           className={`${styles.tabBtn} ${activeTab === 'overview' ? styles.active : ''}`}
-          onClick={() => setActiveTab('overview')}
+          onClick={() => handleTabChange('overview')}
         >
           <Layout size={18} /> System Overview
         </button>
         <button
           className={`${styles.tabBtn} ${activeTab === 'mappings' ? styles.active : ''}`}
-          onClick={() => setActiveTab('mappings')}
+          onClick={() => handleTabChange('mappings')}
         >
           <Layers size={18} /> Faculty Mappings
         </button>
         <button
           className={`${styles.tabBtn} ${activeTab === 'whitelist' ? styles.active : ''}`}
-          onClick={() => setActiveTab('whitelist')}
+          onClick={() => handleTabChange('whitelist')}
         >
           <ShieldCheck size={18} /> User Whitelist
         </button>
         <button
           className={`${styles.tabBtn} ${activeTab === 'tools' ? styles.active : ''}`}
-          onClick={() => setActiveTab('tools')}
+          onClick={() => handleTabChange('tools')}
         >
           <Settings size={18} /> System Tools
         </button>

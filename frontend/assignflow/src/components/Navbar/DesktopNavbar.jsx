@@ -31,6 +31,12 @@ const DesktopNavbar = () => {
               <Link to={dashboardPath} className={styles.navLink}>Dashboard</Link>
               {assignmentsPath && <Link to={assignmentsPath} className={styles.navLink}>Assignments</Link>}
               {profilePath && <Link to={profilePath} className={styles.navLink}>Profile</Link>}
+              {user?.role === 'admin' && (
+                <>
+                  <Link to="/admin-dashboard?tab=mappings" className={styles.navLink}>Mappings</Link>
+                  <Link to="/admin-dashboard?tab=whitelist" className={styles.navLink}>Whitelist</Link>
+                </>
+              )}
               <button onClick={handleLogout} className="btn-primary">Logout</button>
             </>
           ) : (
