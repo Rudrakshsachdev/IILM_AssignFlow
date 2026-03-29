@@ -1,0 +1,83 @@
+.section {
+  padding: 100px 0;
+  position: relative;
+  background-color: var(--bg-color);
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.label {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: rgba(129, 32, 44, 0.1);
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  color: var(--secondary-color);
+  margin-bottom: 1.25rem;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+}
+
+.cta {
+  text-align: center;
+  margin-top: 4rem;
+  padding: 3rem;
+  border-radius: 20px;
+  background: rgba(129, 32, 44, 0.03);
+  border: 1px dashed rgba(129, 32, 44, 0.2);
+}
+
+.ctaText {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: 60px 0;
+  }
+  
+  .header {
+    margin-bottom: 3rem;
+  }
+  
+  .title {
+    font-size: 2.25rem;
+  }
+  
+  .cta {
+    padding: 2rem 1.5rem;
+    margin-top: 3rem;
+  }
+}

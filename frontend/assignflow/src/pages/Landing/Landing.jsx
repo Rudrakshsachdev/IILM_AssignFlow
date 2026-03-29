@@ -6,6 +6,7 @@ import ComparisonSection from '../../components/landing/ComparisonSection/Compar
 import SecuritySection from '../../components/landing/SecuritySection/SecuritySection';
 import StatsSection from '../../components/landing/StatsSection/StatsSection';
 import TestimonialsSection from '../../components/landing/TestimonialsSection/TestimonialsSection';
+import FAQSection from '../../components/landing/FAQSection/FAQSection';
 import CTASection from '../../components/landing/CTASection/CTASection';
 import Footer from '../../components/layout/Footer/Footer';
 
@@ -21,6 +22,7 @@ const Landing = () => {
         <SecuritySection />
         <StatsSection />
         <TestimonialsSection />
+        <FAQSection />
         <CTASection />
       </main>
       <Footer />
