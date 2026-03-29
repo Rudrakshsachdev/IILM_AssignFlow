@@ -6,6 +6,7 @@ from app.db.session import get_db
 from app.api.deps import get_current_user, RoleChecker
 from app.models.users import User
 from app.models.assignment import Assignment
+from app.models.submission import Submission
 from app.models.course import Course
 from app.models.faculty_mapping import FacultyMapping
 from app.models.allowed_users import AllowedUser
@@ -31,6 +32,7 @@ def get_admin_stats(
     student_count = db.query(User).filter(User.role == "student").count()
     faculty_count = db.query(User).filter(User.role == "faculty").count()
     assignment_count = db.query(Assignment).count()
+    submission_count = db.query(Submission).count()
     course_count = db.query(Course).count()
     mapping_count = db.query(FacultyMapping).count()
 
@@ -38,6 +40,7 @@ def get_admin_stats(
         "total_students": student_count,
         "total_faculty": faculty_count,
         "total_assignments": assignment_count,
+        "total_submissions": submission_count,
         "total_courses": course_count,
         "total_mappings": mapping_count,
     }
