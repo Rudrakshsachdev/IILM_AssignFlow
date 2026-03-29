@@ -43,8 +43,12 @@ const MobileNavbar = () => {
                 {profilePath && <Link to={profilePath} className={styles.navLink} onClick={closeMenu}>Profile</Link>}
                 {user?.role === 'admin' && (
                   <>
+                    <Link to="/admin-dashboard?tab=overview" className={styles.navLink} onClick={closeMenu}>System Overview</Link>
                     <Link to="/admin-dashboard?tab=mappings" className={styles.navLink} onClick={closeMenu}>Faculty Mappings</Link>
-                    <Link to="/admin-dashboard?tab=whitelist" className={styles.navLink} onClick={closeMenu}>Users Whitelist</Link>
+                    <Link to="/admin-dashboard?tab=submissions" className={styles.navLink} onClick={closeMenu}>Student Submissions</Link>
+                    <Link to="/admin-dashboard?tab=assignments" className={styles.navLink} onClick={closeMenu}>Faculty Assignments</Link>
+                    <Link to="/admin-dashboard?tab=whitelist" className={styles.navLink} onClick={closeMenu}>User Whitelist</Link>
+                    <Link to="/admin-dashboard?tab=tools" className={styles.navLink} onClick={closeMenu}>System Tools</Link>
                   </>
                 )}
                 <button onClick={handleLogout} className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>Logout</button>
