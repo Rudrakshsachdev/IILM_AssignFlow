@@ -109,58 +109,102 @@ const AdminAssignmentsTab = () => {
             <p>No assignments found matching the criteria.</p>
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table className={styles.mappingTable}>
-              <thead>
-                <tr>
-                  <th>Assignment Info</th>
-                  <th>Faculty</th>
-                  <th>Deadline</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
+          <>
+            {/* Desktop Table View */}
+            <div className={styles.desktopOnly} style={{ overflowX: 'auto' }}>
+              <table className={styles.mappingTable}>
+                <thead>
+                  <tr>
+                    <th>Assignment Info</th>
+                    <th>Faculty</th>
+                    <th>Deadline</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {assignments.map((assg) => (
+                    <tr key={assg.assignment_id}>
+                      <td>
+                        <div style={{ fontWeight: 600, color: 'var(--secondary-color)' }}>{assg.title}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--primary-color)', fontWeight: 600 }}>{assg.subject}</div>
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: 500 }}>{assg.faculty_name}</div>
+                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{assg.faculty_department} ({assg.faculty_employee_id})</div>
+                      </td>
+                      <td>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 500 }}>{new Date(assg.deadline).toLocaleDateString()}</div>
+                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{new Date(assg.deadline).toLocaleTimeString()}</div>
+                      </td>
+                      <td>
+                        <span style={{ 
+                          background: assg.status === 'published' ? '#dcfce7' : assg.status === 'closed' ? '#fee2e2' : '#f1f5f9', 
+                          color: assg.status === 'published' ? '#166534' : assg.status === 'closed' ? '#991b1b' : '#64748b', 
+                          padding: '0.2rem 0.6rem', 
+                          borderRadius: '4px', 
+                          fontSize: '0.85rem',
+                          fontWeight: 600,
+                          textTransform: 'capitalize' 
+                        }}>
+                          {assg.status}
+                        </span>
+                      </td>
+                      <td>
+                        <button 
+                          className={styles.viewBtn} 
+                          onClick={() => openDetails(assg)}
+                          title="View Details"
+                        >
+                          <Eye size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className={styles.mobileOnly}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {assignments.map((assg) => (
-                  <tr key={assg.assignment_id}>
-                    <td>
-                      <div style={{ fontWeight: 600 }}>{assg.title}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{assg.subject}</div>
-                    </td>
-                    <td>
-                      <div style={{ fontWeight: 500 }}>{assg.faculty_name}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{assg.faculty_department} ({assg.faculty_employee_id})</div>
-                    </td>
-                    <td>
-                      <div style={{ fontSize: '0.9rem' }}>{new Date(assg.deadline).toLocaleDateString()}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{new Date(assg.deadline).toLocaleTimeString()}</div>
-                    </td>
-                    <td>
+                  <div key={assg.assignment_id} className="glass-card" style={{ padding: '1.25rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, color: 'var(--secondary-color)' }}>{assg.title}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--primary-color)', fontWeight: 600 }}>{assg.subject}</div>
+                      </div>
                       <span style={{ 
                         background: assg.status === 'published' ? '#dcfce7' : assg.status === 'closed' ? '#fee2e2' : '#f1f5f9', 
                         color: assg.status === 'published' ? '#166534' : assg.status === 'closed' ? '#991b1b' : '#64748b', 
                         padding: '0.2rem 0.6rem', 
                         borderRadius: '4px', 
-                        fontSize: '0.85rem',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
                         textTransform: 'capitalize' 
                       }}>
                         {assg.status}
                       </span>
-                    </td>
-                    <td>
-                      <button 
-                        className={styles.viewBtn} 
-                        onClick={() => openDetails(assg)}
-                        title="View Details"
-                      >
-                        <Eye size={18} />
+                    </div>
+                    <div style={{ marginBottom: '1rem' }}>
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Faculty</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{assg.faculty_name}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{assg.faculty_department} ({assg.faculty_employee_id})</div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                        Due: {new Date(assg.deadline).toLocaleDateString()}
+                      </div>
+                      <button className="btn-secondary" onClick={() => openDetails(assg)} style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>
+                        Details
                       </button>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
 

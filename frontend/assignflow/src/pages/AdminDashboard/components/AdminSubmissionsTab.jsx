@@ -111,51 +111,84 @@ const AdminSubmissionsTab = () => {
             <p>No submissions found matching the criteria.</p>
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table className={styles.mappingTable}>
-              <thead>
-                <tr>
-                  <th>Student Info</th>
-                  <th>Assignment</th>
-                  <th>Course/Section</th>
-                  <th>Submitted At</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {submissions.map((sub) => (
-                  <tr key={sub.submission_id}>
-                    <td>
-                      <div style={{ fontWeight: 600 }}>{sub.student_name}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>URN: {sub.student_urn}</div>
-                    </td>
-                    <td>
-                      <div style={{ fontWeight: 500 }}>{sub.assignment_title}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--primary-color)' }}>{sub.assignment_subject}</div>
-                    </td>
-                    <td>
-                      <span className={styles.badge}>
-                        {sub.student_course} / {sub.student_section} (Yr {sub.student_year})
-                      </span>
-                    </td>
-                    <td>
-                      <div style={{ fontSize: '0.9rem' }}>{new Date(sub.submitted_at).toLocaleDateString()}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{new Date(sub.submitted_at).toLocaleTimeString()}</div>
-                    </td>
-                    <td>
-                      <button 
-                        className={styles.viewBtn} 
-                        onClick={() => openDetails(sub)}
-                        title="View Details"
-                      >
-                        <Eye size={18} />
-                      </button>
-                    </td>
+          <>
+            {/* Desktop Table View */}
+            <div className={styles.desktopOnly} style={{ overflowX: 'auto' }}>
+              <table className={styles.mappingTable}>
+                <thead>
+                  <tr>
+                    <th>Student Info</th>
+                    <th>Assignment</th>
+                    <th>Course/Section</th>
+                    <th>Submitted At</th>
+                    <th>Actions</th>
                   </tr>
+                </thead>
+                <tbody>
+                  {submissions.map((sub) => (
+                    <tr key={sub.submission_id}>
+                      <td>
+                        <div style={{ fontWeight: 600, color: 'var(--secondary-color)' }}>{sub.student_name}</div>
+                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>URN: {sub.student_urn}</div>
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: 500 }}>{sub.assignment_title}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--primary-color)', fontWeight: 600 }}>{sub.assignment_subject}</div>
+                      </td>
+                      <td>
+                        <span className={styles.badge}>
+                          {sub.student_course} / {sub.student_section} (Yr {sub.student_year})
+                        </span>
+                      </td>
+                      <td>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 500 }}>{new Date(sub.submitted_at).toLocaleDateString()}</div>
+                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{new Date(sub.submitted_at).toLocaleTimeString()}</div>
+                      </td>
+                      <td>
+                        <button 
+                          className={styles.viewBtn} 
+                          onClick={() => openDetails(sub)}
+                          title="View Details"
+                        >
+                          <Eye size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className={styles.mobileOnly}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {submissions.map((sub) => (
+                  <div key={sub.submission_id} className="glass-card" style={{ padding: '1.25rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                      <div>
+                        <div style={{ fontWeight: 700, color: 'var(--secondary-color)' }}>{sub.student_name}</div>
+                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>URN: {sub.student_urn}</div>
+                      </div>
+                      <span className={styles.badge}>{sub.student_course} / {sub.student_section}</span>
+                    </div>
+                    <div style={{ marginBottom: '1rem' }}>
+                      <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.2rem' }}>Assignment</div>
+                      <div style={{ fontWeight: 600 }}>{sub.assignment_title}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--primary-color)' }}>{sub.assignment_subject}</div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                        {new Date(sub.submitted_at).toLocaleDateString()} at {new Date(sub.submitted_at).toLocaleTimeString()}
+                      </div>
+                      <button className="btn-secondary" onClick={() => openDetails(sub)} style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>
+                        Details
+                      </button>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
 

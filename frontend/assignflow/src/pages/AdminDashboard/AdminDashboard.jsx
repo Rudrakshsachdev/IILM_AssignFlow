@@ -383,43 +383,72 @@ const AdminDashboard = () => {
             {mappings.length === 0 ? (
               <p style={{ color: '#64748b' }}>No faculty mappings exist yet.</p>
             ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table className={styles.mappingTable}>
-                  <thead>
-                    <tr>
-                      <th>Faculty</th>
-                      <th>Subject</th>
-                      <th>Assigned Section</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+              <>
+                <div className={styles.desktopOnly} style={{ overflowX: 'auto' }}>
+                  <table className={styles.mappingTable}>
+                    <thead>
+                      <tr>
+                        <th>Faculty</th>
+                        <th>Subject</th>
+                        <th>Assigned Section</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {mappings.map(m => (
+                        <tr key={m.id}>
+                          <td>
+                            <div style={{ fontWeight: 600, color: 'var(--secondary-color)' }}>{m.faculty_name}</div>
+                            <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{m.faculty_email}</div>
+                          </td>
+                          <td>
+                            <div style={{ fontWeight: 500 }}>{m.subject_name}</div>
+                          </td>
+                          <td>
+                            <span style={{ background: 'var(--secondary-color)', color: '#fff', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 600 }}>
+                              {m.section_label}
+                            </span>
+                          </td>
+                          <td>
+                            <button
+                              onClick={() => handleDeleteMapping(m.id)}
+                              className={styles.deleteBtn}
+                              title="Remove Mapping"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className={styles.mobileOnly}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     {mappings.map(m => (
-                      <tr key={m.id}>
-                        <td>
-                          <div style={{ fontWeight: 500 }}>{m.faculty_name}</div>
-                          <div style={{ fontSize: '0.85rem', color: '#64748b' }}>{m.faculty_email}</div>
-                        </td>
-                        <td>{m.subject_name}</td>
-                        <td>
-                          <span style={{ background: 'var(--secondary-color)', color: '#fff', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.85rem' }}>
+                      <div key={m.id} className="glass-card" style={{ padding: '1.25rem', background: '#fff' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                          <div>
+                            <div style={{ fontWeight: 700, color: 'var(--secondary-color)' }}>{m.faculty_name}</div>
+                            <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{m.faculty_email}</div>
+                          </div>
+                          <button onClick={() => handleDeleteMapping(m.id)} className={styles.deleteBtn}><Trash2 size={16} /></button>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Subject</div>
+                            <div style={{ fontWeight: 600 }}>{m.subject_name}</div>
+                          </div>
+                          <span style={{ background: 'var(--secondary-color)', color: '#fff', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>
                             {m.section_label}
                           </span>
-                        </td>
-                        <td>
-                          <button
-                            onClick={() => handleDeleteMapping(m.id)}
-                            className={styles.deleteBtn}
-                            title="Remove Mapping"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </td>
-                      </tr>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
-              </div>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -490,52 +519,85 @@ const AdminDashboard = () => {
             {allowedUsers.length === 0 ? (
               <p style={{ color: '#64748b' }}>No users are whitelisted yet.</p>
             ) : (
-              <div style={{ overflowX: 'auto', maxHeight: '500px' }}>
-                <table className={styles.mappingTable}>
-                  <thead style={{ position: 'sticky', top: 0, background: '#f8fafc', zIndex: 1 }}>
-                    <tr>
-                      <th>Email</th>
-                      <th>Role</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+              <>
+                <div className={styles.desktopOnly} style={{ overflowX: 'auto' }}>
+                  <table className={styles.mappingTable}>
+                    <thead>
+                      <tr>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allowedUsers.map(u => (
+                        <tr key={u.id}>
+                          <td style={{ fontWeight: 600, color: 'var(--secondary-color)' }}>{u.email}</td>
+                          <td>
+                            <span style={{ 
+                              background: u.role === 'admin' ? '#fee2e2' : u.role === 'faculty' ? '#e0e7ff' : '#dcfce7', 
+                              color: u.role === 'admin' ? '#991b1b' : u.role === 'faculty' ? '#3730a3' : '#166534', 
+                              padding: '0.2rem 0.6rem', 
+                              borderRadius: '4px', 
+                              fontSize: '0.85rem',
+                              fontWeight: 600,
+                              textTransform: 'capitalize' 
+                            }}>
+                              {u.role}
+                            </span>
+                          </td>
+                          <td>
+                            {u.is_active ? 
+                              <span style={{ color: '#166534', fontSize: '0.85rem', fontWeight: 700 }}>Active</span> 
+                              : <span style={{ color: '#991b1b', fontSize: '0.85rem', fontWeight: 700 }}>Inactive</span>
+                            }
+                          </td>
+                          <td>
+                            <button
+                              onClick={() => handleDeleteAllowedUser(u.id)}
+                              className={styles.deleteBtn}
+                              title="Remove Access"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className={styles.mobileOnly}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     {allowedUsers.map(u => (
-                      <tr key={u.id}>
-                        <td style={{ fontWeight: 500 }}>{u.email}</td>
-                        <td>
+                      <div key={u.id} className="glass-card" style={{ padding: '1.25rem', background: '#fff' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                          <div style={{ fontWeight: 700, color: 'var(--secondary-color)', wordBreak: 'break-all', flex: 1, marginRight: '1rem' }}>{u.email}</div>
+                          <button onClick={() => handleDeleteAllowedUser(u.id)} className={styles.deleteBtn}><Trash2 size={16} /></button>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <span style={{ 
                             background: u.role === 'admin' ? '#fee2e2' : u.role === 'faculty' ? '#e0e7ff' : '#dcfce7', 
                             color: u.role === 'admin' ? '#991b1b' : u.role === 'faculty' ? '#3730a3' : '#166534', 
                             padding: '0.2rem 0.6rem', 
                             borderRadius: '4px', 
-                            fontSize: '0.85rem',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
                             textTransform: 'capitalize' 
                           }}>
                             {u.role}
                           </span>
-                        </td>
-                        <td>
                           {u.is_active ? 
-                            <span style={{ color: '#166534', fontSize: '0.85rem', fontWeight: 600 }}>Active</span> 
-                            : <span style={{ color: '#991b1b', fontSize: '0.85rem', fontWeight: 600 }}>Inactive</span>
+                            <span style={{ color: '#166534', fontSize: '0.8rem', fontWeight: 700 }}>● Active</span> 
+                            : <span style={{ color: '#991b1b', fontSize: '0.8rem', fontWeight: 700 }}>● Inactive</span>
                           }
-                        </td>
-                        <td>
-                          <button
-                            onClick={() => handleDeleteAllowedUser(u.id)}
-                            className={styles.deleteBtn}
-                            title="Remove Access"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </td>
-                      </tr>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
-              </div>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>
