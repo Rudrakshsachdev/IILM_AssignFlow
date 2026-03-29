@@ -12,6 +12,7 @@ import FacultyProfile from '../pages/Profile/FacultyProfile';
 import ResetPassword from '../pages/Auth/ResetPassword';
 import CreateAssignment from '../pages/FacultyDashboard/CreateAssignment';
 import FacultySubmissionReview from '../pages/FacultyDashboard/FacultySubmissionReview';
+import FacultyStudents from '../pages/FacultyDashboard/FacultyStudents';
 import AssignmentDetails from '../pages/StudentDashboard/AssignmentDetails';
 import StudentAssignments from '../pages/StudentDashboard/StudentAssignments';
 import StudentSubmissions from '../pages/StudentDashboard/StudentSubmissions';
@@ -108,6 +109,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={['faculty']}>
             <FacultySubmissionReview />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/faculty-dashboard/students"
+        element={
+          <ProtectedRoute allowedRoles={['faculty']}>
+            <FacultyStudents />
           </ProtectedRoute>
         }
       />

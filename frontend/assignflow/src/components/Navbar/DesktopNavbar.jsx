@@ -17,6 +17,7 @@ const DesktopNavbar = () => {
   const profilePath = user?.role === 'student' ? '/student-dashboard/profile' : (user?.role === 'faculty' ? '/faculty-dashboard/profile' : null);
   const assignmentsPath = user?.role === 'faculty' ? '/faculty-dashboard/create-assignment' : (user?.role === 'student' ? '/student-dashboard/assignments' : null);
   const submissionsPath = user?.role === 'student' ? '/student-dashboard/submissions' : null;
+  const studentsPath = user?.role === 'faculty' ? '/faculty-dashboard/students' : null;
 
   return (
     <nav className={styles.navbar}>
@@ -32,6 +33,7 @@ const DesktopNavbar = () => {
               <Link to={dashboardPath} className={styles.navLink}>Dashboard</Link>
               {assignmentsPath && <Link to={assignmentsPath} className={styles.navLink}>Assignments</Link>}
               {submissionsPath && <Link to={submissionsPath} className={styles.navLink}>Submissions</Link>}
+              {studentsPath && <Link to={studentsPath} className={styles.navLink}>My Students</Link>}
               {profilePath && <Link to={profilePath} className={styles.navLink}>Profile</Link>}
               {user?.role === 'admin' && (
                 <>

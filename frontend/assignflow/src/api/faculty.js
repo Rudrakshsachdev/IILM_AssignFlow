@@ -47,3 +47,8 @@ export const getFacultyStats = async () => {
   const res = await api.get('/faculty/stats');
   return res.data;
 };
+
+export const getFacultyStudents = async () => {
+  const res = await api.get('/faculty/students');
+  return res.data;
+};

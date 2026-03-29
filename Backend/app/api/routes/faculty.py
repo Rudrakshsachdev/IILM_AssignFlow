@@ -130,3 +130,17 @@ def get_dashboard_stats(
 ):
     """Aggregate statistics for the faculty dashboard."""
     return get_faculty_stats(db=db, faculty_id=current_user.id)
+
+
+@router.get("/students")
+def get_mapped_students(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(allow_faculty),
+):
+    """
+    Get students belonging to sections this faculty is mapped to.
+    Returns data grouped by year → section with counts.
+    Access is strictly scoped via FacultyMapping table.
+    """
+    from app.services.faculty_students_service import get_faculty_students
+    return get_faculty_students(db=db, faculty_id=current_user.id)
