@@ -4,11 +4,16 @@ from app.db.session import get_db
 from app.models.users import User
 from app.schemas.users import UserCreate, UserLogin, Token, UserOut
 from app.core.security import hash_password, verify_password, create_access_token
+from app.services.allowed_users_service import check_email_allowed
 
 router = APIRouter()
 
 @router.post("/signup", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 def signup(user: UserCreate, db: Session = Depends(get_db)):
+    allowed_user = check_email_allowed(db, user.email)
+    if not allowed_user or not allowed_user.is_active:
+        raise HTTPException(status_code=403, detail="You are not authorized to register on this platform.")
+
     db_user = db.query(User).filter(User.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -18,7 +23,7 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
         name=user.name,
         email=user.email,
         password=hashed_pwd,
-        role=user.role,
+        role=allowed_user.role,
         school=user.school
     )
     db.add(new_user)
@@ -29,6 +34,10 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=Token)
 def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
+    allowed_user = check_email_allowed(db, user_credentials.email)
+    if not allowed_user or not allowed_user.is_active:
+        raise HTTPException(status_code=403, detail="Access denied. Your account is not authorized.")
+
     db_user = db.query(User).filter(User.email == user_credentials.email).first()
     if not db_user or not verify_password(user_credentials.password, db_user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
@@ -42,6 +51,10 @@ from app.core.security import create_password_reset_token, verify_password_reset
 
 @router.post("/forgot-password")
 def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    allowed_user = check_email_allowed(db, request.email)
+    if not allowed_user or not allowed_user.is_active:
+        return {"message": "If that email is registered, a reset link will be sent."}
+
     db_user = db.query(User).filter(User.email == request.email).first()
     if not db_user:
         # We don't want to leak whether the email exists for security reasons
@@ -73,6 +86,10 @@ def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db))
 
     if not email:
         raise HTTPException(status_code=400, detail="Invalid token payload")
+
+    allowed_user = check_email_allowed(db, email)
+    if not allowed_user or not allowed_user.is_active:
+        raise HTTPException(status_code=403, detail="Access denied. Your account is not authorized.")
 
     db_user = db.query(User).filter(User.email == email).first()
     if not db_user:

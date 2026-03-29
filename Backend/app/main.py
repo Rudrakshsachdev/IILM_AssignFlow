@@ -13,6 +13,7 @@ from app.models.course import Course
 from app.models.section import Section
 from app.models.subject import Subject
 from app.models.faculty_mapping import FacultyMapping
+from app.models.allowed_users import AllowedUser
 from app.api.routes import auth, dashboards, student, faculty, assignment, submission, academic, admin
 
 # Initialize DB tables

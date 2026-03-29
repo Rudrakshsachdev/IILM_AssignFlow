@@ -8,7 +8,10 @@ from app.models.users import User
 from app.models.assignment import Assignment
 from app.models.course import Course
 from app.models.faculty_mapping import FacultyMapping
+from app.models.allowed_users import AllowedUser
 from app.schemas.users import UserOut
+from app.schemas.allowed_users import AllowedUserCreate, AllowedUserUpdate, AllowedUserResponse
+from app.services.allowed_users_service import add_allowed_user, update_allowed_user, delete_allowed_user, list_allowed_users
 
 router = APIRouter()
 
@@ -48,3 +51,24 @@ def get_all_faculties(
     """
     faculties = db.query(User).filter(User.role == "faculty").all()
     return faculties
+
+@router.get("/allowed-users", response_model=List[AllowedUserResponse])
+def get_allowed_users(db: Session = Depends(get_db), current_user: User = Depends(allow_admin)):
+    """List all allowed users in the system."""
+    return list_allowed_users(db)
+
+@router.post("/allowed-users", response_model=AllowedUserResponse, status_code=201)
+def create_allowed_user(data: AllowedUserCreate, db: Session = Depends(get_db), current_user: User = Depends(allow_admin)):
+    """Add a new email to the allowed whitelist with a specific role."""
+    return add_allowed_user(db, data)
+
+@router.put("/allowed-users/{user_id}", response_model=AllowedUserResponse)
+def modify_allowed_user(user_id: str, data: AllowedUserUpdate, db: Session = Depends(get_db), current_user: User = Depends(allow_admin)):
+    """Update role or active status of a whitelisted user."""
+    return update_allowed_user(db, user_id, data)
+
+@router.delete("/allowed-users/{user_id}", status_code=204)
+def remove_allowed_user(user_id: str, db: Session = Depends(get_db), current_user: User = Depends(allow_admin)):
+    """Remove a user from the whitelist entirely."""
+    delete_allowed_user(db, user_id)
+    return None

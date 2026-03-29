@@ -10,7 +10,7 @@ import logo from '../../assets/iilm-logo.png';
 import styles from './AuthForm.module.css';
 
 const AuthForm = ({ type }) => {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'student', school: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', school: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -76,15 +76,7 @@ const AuthForm = ({ type }) => {
                 <input type="text" name="name" value={formData.name} onChange={handleChange} required />
               </div>
               <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label>Role</label>
-                  <select name="role" value={formData.role} onChange={handleChange}>
-                    <option value="student">Student</option>
-                    <option value="faculty">Faculty</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </div>
-                <div className={styles.formGroup}>
+                <div className={styles.formGroup} style={{ width: '100%' }}>
                   <label>School</label>
                   <input type="text" name="school" value={formData.school} onChange={handleChange} placeholder="e.g. SRM / IILM" />
                 </div>
