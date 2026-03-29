@@ -75,6 +75,39 @@ def get_student_submissions(db: Session, student_id: int) -> List[Submission]:
     return db.query(Submission).filter(Submission.student_id == student_id).all()
 
 
+def get_student_submissions_with_assignment(db: Session, student_id: int) -> List[dict]:
+    """
+    Fetch all submissions for a student, joining with Assignment to include title, subject, and deadline.
+    """
+    results = db.query(Submission, Assignment).filter(
+        Submission.student_id == student_id
+    ).join(
+        Assignment, Submission.assignment_id == Assignment.id
+    ).order_by(Submission.submitted_at.desc()).all()
+    
+    formatted_results = []
+    for sub, assignment in results:
+        sub_dict = {
+            "id": sub.id,
+            "assignment_id": sub.assignment_id,
+            "student_id": sub.student_id,
+            "file_url": sub.file_url,
+            "status": sub.status,
+            "marks_obtained": sub.marks_obtained,
+            "feedback": sub.feedback,
+            "evaluated_at": sub.evaluated_at,
+            "submitted_at": sub.submitted_at,
+            "created_at": sub.created_at,
+            "updated_at": sub.updated_at,
+            "assignment_title": assignment.title,
+            "subject": assignment.subject,
+            "deadline": assignment.deadline
+        }
+        formatted_results.append(sub_dict)
+        
+    return formatted_results
+
+
 def get_assignment_submissions(db: Session, assignment_id: int) -> List[Submission]:
     return db.query(Submission).filter(Submission.assignment_id == assignment_id).all()
 

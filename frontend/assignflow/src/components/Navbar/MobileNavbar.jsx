@@ -21,6 +21,7 @@ const MobileNavbar = () => {
   const dashboardPath = user?.role === 'student' ? '/student-dashboard' : (user?.role === 'faculty' ? '/faculty-dashboard' : (user?.role === 'admin' ? '/admin-dashboard' : '/'));
   const profilePath = user?.role === 'student' ? '/student-dashboard/profile' : (user?.role === 'faculty' ? '/faculty-dashboard/profile' : null);
   const assignmentsPath = user?.role === 'faculty' ? '/faculty-dashboard/create-assignment' : (user?.role === 'student' ? '/student-dashboard/assignments' : null);
+  const submissionsPath = user?.role === 'student' ? '/student-dashboard/submissions' : null;
 
   return (
     <nav className={styles.navbar}>
@@ -40,6 +41,7 @@ const MobileNavbar = () => {
               <>
                 <Link to={dashboardPath} className={styles.navLink} onClick={closeMenu}>Dashboard</Link>
                 {assignmentsPath && <Link to={assignmentsPath} className={styles.navLink} onClick={closeMenu}>Assignments</Link>}
+                {submissionsPath && <Link to={submissionsPath} className={styles.navLink} onClick={closeMenu}>Submissions</Link>}
                 {profilePath && <Link to={profilePath} className={styles.navLink} onClick={closeMenu}>Profile</Link>}
                 {user?.role === 'admin' && (
                   <>

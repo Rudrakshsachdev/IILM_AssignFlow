@@ -14,6 +14,7 @@ import CreateAssignment from '../pages/FacultyDashboard/CreateAssignment';
 import FacultySubmissionReview from '../pages/FacultyDashboard/FacultySubmissionReview';
 import AssignmentDetails from '../pages/StudentDashboard/AssignmentDetails';
 import StudentAssignments from '../pages/StudentDashboard/StudentAssignments';
+import StudentSubmissions from '../pages/StudentDashboard/StudentSubmissions';
 import ForgotPassword from '../pages/Auth/ForgotPassword';
 
 const AppRoutes = () => {
@@ -44,6 +45,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={['student']}>
             <StudentAssignments />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/student-dashboard/submissions"
+        element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <StudentSubmissions />
           </ProtectedRoute>
         }
       />

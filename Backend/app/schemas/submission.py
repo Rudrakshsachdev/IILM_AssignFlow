@@ -46,3 +46,11 @@ class SubmissionWithStudentResponse(SubmissionResponse):
 
     class Config:
         from_attributes = True
+
+class StudentSubmissionResponse(SubmissionResponse):
+    assignment_title: str
+    subject: str
+    deadline: datetime
+
+    class Config:
+        from_attributes = True

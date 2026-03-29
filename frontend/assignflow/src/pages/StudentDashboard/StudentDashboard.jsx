@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
-import { User, FileText, BarChart2 } from 'lucide-react';
+import { User, FileText, BarChart2, FileCheck } from 'lucide-react';
 import { getStudentAssignments } from '../../api/assignment';
 import { getMySubmissions } from '../../api/submission';
 import styles from './StudentDashboard.module.css';
@@ -94,6 +94,12 @@ const StudentDashboard = () => {
                   <p className="text-muted" style={{ color: 'var(--primary-color)', fontWeight: '600' }}>Pending: {assignments.filter(a => a.submissionStatus === 'Pending').length}</p>
                 </>
               )}
+            </div>
+          </Link>
+          <Link to="/student-dashboard/submissions" style={{ textDecoration: 'none' }}>
+            <div className={`glass-card hover-lift ${styles.card}`} style={{ height: '100%' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><FileCheck size={20} color="var(--primary-color)" /> My Submissions</h3>
+              <p className="text-muted">View your submitted work, check evaluation status, and read faculty feedback.</p>
             </div>
           </Link>
           <div className={`glass-card ${styles.card}`}>

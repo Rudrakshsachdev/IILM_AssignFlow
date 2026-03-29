@@ -16,6 +16,9 @@ from app.services.student_service import (
     update_student_profile,
     update_profile_pic_url,
 )
+from app.services.submission_service import get_student_submissions_with_assignment
+from app.schemas.submission import StudentSubmissionResponse
+from typing import List
 from app.utils.cloudinary import upload_profile_pic
 
 router = APIRouter()
@@ -100,4 +103,13 @@ def upload_only(
         return {"student_profile_pic": url}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/submissions", response_model=List[StudentSubmissionResponse])
+def get_my_submissions(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(allow_student),
+):
+    """Get all submissions for the logged-in student, including assignment metadata."""
+    return get_student_submissions_with_assignment(db=db, student_id=current_user.id)
 
