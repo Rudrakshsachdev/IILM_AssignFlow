@@ -3,6 +3,7 @@ import FeatureSection from '../../components/landing/FeatureSection/FeatureSecti
 import HowItWorksSection from '../../components/landing/HowItWorksSection/HowItWorksSection';
 import WhyChooseUsSection from '../../components/landing/WhyChooseUsSection/WhyChooseUsSection';
 import ComparisonSection from '../../components/landing/ComparisonSection/ComparisonSection';
+import SecuritySection from '../../components/landing/SecuritySection/SecuritySection';
 import StatsSection from '../../components/landing/StatsSection/StatsSection';
 import TestimonialsSection from '../../components/landing/TestimonialsSection/TestimonialsSection';
 import CTASection from '../../components/landing/CTASection/CTASection';
@@ -17,6 +18,7 @@ const Landing = () => {
         <HowItWorksSection />
         <WhyChooseUsSection />
         <ComparisonSection />
+        <SecuritySection />
         <StatsSection />
         <TestimonialsSection />
         <CTASection />

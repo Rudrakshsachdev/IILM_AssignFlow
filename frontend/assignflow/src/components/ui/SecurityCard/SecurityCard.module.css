@@ -1,0 +1,83 @@
+.card {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(129, 32, 44, 0.2);
+}
+
+.highlight {
+  border: 2px solid var(--primary-color);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(129, 32, 44, 0.03));
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(129, 32, 44, 0.08);
+  color: var(--primary-color);
+  transition: var(--transition);
+}
+
+.card:hover .iconWrapper {
+  background: var(--primary-color);
+  color: white;
+  transform: rotate(5deg);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin: 0;
+}
+
+.description {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.badge {
+  position: absolute;
+  top: 1rem;
+  right: -2rem;
+  background: var(--primary-color);
+  color: white;
+  padding: 0.25rem 3rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  transform: rotate(45deg);
+  box-shadow: 0 4px 10px rgba(129, 32, 44, 0.15);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 2rem 1.5rem;
+    gap: 1.25rem;
+  }
+  
+  .iconWrapper {
+    width: 48px;
+    height: 48px;
+  }
+}
