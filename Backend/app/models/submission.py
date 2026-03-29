@@ -22,12 +22,12 @@ class Submission(Base):
 
     file_url = Column(Text, nullable=False)
     
-    # "submitted", "late"
-    status = Column(String, default="submitted")
+    status = Column(String, default="pending")
     
     # Future grading
-    marks = Column(Integer, nullable=True)
+    marks_obtained = Column(Integer, nullable=True)
     feedback = Column(Text, nullable=True)
+    evaluated_at = Column(DateTime, nullable=True)
 
     submitted_at = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)

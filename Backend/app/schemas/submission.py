@@ -12,14 +12,22 @@ class SubmissionCreate(BaseModel):
     file_url: str
 
 
+class SubmissionEvaluateRequest(BaseModel):
+    marks_obtained: Optional[int] = None
+    feedback: Optional[str] = None
+    status: str
+
+
+
 class SubmissionResponse(BaseModel):
     id: str
     assignment_id: int
     student_id: int
     file_url: str
     status: str
-    marks: Optional[int] = None
+    marks_obtained: Optional[int] = None
     feedback: Optional[str] = None
+    evaluated_at: Optional[datetime] = None
     submitted_at: datetime
     created_at: datetime
     updated_at: datetime

@@ -8,6 +8,7 @@ from typing import List
 from datetime import datetime
 from app.models.submission import Submission
 from app.models.assignment import Assignment
+from app.schemas.submission import SubmissionEvaluateRequest
 
 
 def submit_assignment(db: Session, student_id: int, assignment_id: int, file_url: str, section_id: int = None) -> Submission:
@@ -53,7 +54,7 @@ def submit_assignment(db: Session, student_id: int, assignment_id: int, file_url
 
     # 4. Determine if late
     current_time = datetime.utcnow()
-    sub_status = "late" if current_time > assignment.deadline else "submitted"
+    sub_status = "late" if current_time > assignment.deadline else "pending"
 
     # 5. Save
     new_submission = Submission(
@@ -112,8 +113,9 @@ def get_assignment_submissions_with_student(db: Session, assignment_id: int, fac
             "student_id": sub.student_id,
             "file_url": sub.file_url,
             "status": sub.status,
-            "marks": sub.marks,
+            "marks_obtained": sub.marks_obtained,
             "feedback": sub.feedback,
+            "evaluated_at": sub.evaluated_at,
             "submitted_at": sub.submitted_at,
             "created_at": sub.created_at,
             "updated_at": sub.updated_at,
@@ -128,3 +130,39 @@ def get_assignment_submissions_with_student(db: Session, assignment_id: int, fac
         formatted_results.append(sub_dict)
         
     return formatted_results
+
+
+def evaluate_submission(db: Session, submission_id: str, faculty_id: int, data: SubmissionEvaluateRequest) -> Submission:
+    """
+    Evaluates a single student submission.
+    Ensures that the submission belongs to an assignment owned by the faculty.
+    """
+    # Join Submission and Assignment to verify ownership
+    result = db.query(Submission, Assignment).filter(
+        Submission.id == submission_id
+    ).join(
+        Assignment, Submission.assignment_id == Assignment.id
+    ).first()
+
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Submission not found."
+        )
+
+    submission, assignment = result
+
+    if assignment.faculty_id != faculty_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to evaluate this submission."
+        )
+
+    submission.marks_obtained = data.marks_obtained
+    submission.feedback = data.feedback
+    submission.status = data.status
+    submission.evaluated_at = datetime.utcnow()
+
+    db.commit()
+    db.refresh(submission)
+    return submission

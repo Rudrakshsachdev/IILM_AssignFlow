@@ -16,6 +16,8 @@ from app.services.faculty_service import (
     update_faculty_profile,
     update_profile_pic_url,
 )
+from app.services.submission_service import evaluate_submission
+from app.schemas.submission import SubmissionResponse, SubmissionEvaluateRequest
 from app.utils.cloudinary import upload_profile_pic
 
 router = APIRouter()
@@ -103,3 +105,19 @@ def upload_only(
         return {"faculty_profile_pic": url}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/submissions/{submission_id}/evaluate", response_model=SubmissionResponse)
+def evaluate_student_submission(
+    submission_id: str,
+    data: SubmissionEvaluateRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(allow_faculty),
+):
+    """Evaluate a student's submission by providing marks, feedback, and status."""
+    return evaluate_submission(
+        db=db,
+        submission_id=submission_id,
+        faculty_id=current_user.id,
+        data=data
+    )
