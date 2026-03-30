@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     CLOUDINARY_PRESET_NAME: str = ""
     CLOUDINARY_UPLOAD_ASSIGNMENT_PRESET: str = ""
 
+    # Email credentials
+    HOST_EMAIL: str = ""
+    HOST_PASSWORD: str = ""
+
 
 
 

@@ -23,6 +23,7 @@ from app.services.assignment_service import (
     enrich_assignment_response,
 )
 from app.utils.cloudinary import upload_assignment_file
+from app.utils.email_service import dispatch_assignment_emails_background
 from app.models.students import Student
 from app.services.submission_service import get_assignment_submissions_with_student
 
@@ -38,8 +39,12 @@ def create(
     db: Session = Depends(get_db),
     current_user: User = Depends(allow_faculty),
 ):
-    """Create a new assignment."""
+    """Create a new assignment and notify students via email."""
     assignment = create_assignment(db=db, faculty_id=current_user.id, data=data)
+
+    # Dispatch email notifications in background (non-blocking)
+    dispatch_assignment_emails_background(db, assignment)
+
     return enrich_assignment_response(db, assignment)
 
 

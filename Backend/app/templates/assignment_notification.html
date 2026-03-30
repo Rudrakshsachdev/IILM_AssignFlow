@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Assignment — AssignFlow</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+
+  <!-- Wrapper -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f1f5f9; padding: 40px 0;">
+    <tr>
+      <td align="center">
+
+        <!-- Card -->
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 32px 40px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;">
+                📚 AssignFlow
+              </h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 500;">
+                IILM University — Assignment Management System
+              </p>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding: 36px 40px 20px;">
+
+              <!-- Greeting -->
+              <p style="margin: 0 0 6px; font-size: 15px; color: #64748b;">Hello,</p>
+              <h2 style="margin: 0 0 24px; font-size: 22px; color: #0f172a; font-weight: 800;">
+                A new assignment has been posted!
+              </h2>
+
+              <!-- Assignment Title Banner -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
+                <tr>
+                  <td style="background-color: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px 20px; border-radius: 0 8px 8px 0;">
+                    <p style="margin: 0 0 4px; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Assignment Title</p>
+                    <h3 style="margin: 0; font-size: 20px; color: #1e3a8a; font-weight: 800;">
+                      {{ASSIGNMENT_TITLE}}
+                    </h3>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Details Grid -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
+                <!-- Subject -->
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; width: 140px;">
+                    <p style="margin: 0; font-size: 13px; color: #64748b; font-weight: 700;">Subject</p>
+                  </td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                    <p style="margin: 0; font-size: 15px; color: #0f172a; font-weight: 600;">{{SUBJECT}}</p>
+                  </td>
+                </tr>
+                <!-- Section -->
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                    <p style="margin: 0; font-size: 13px; color: #64748b; font-weight: 700;">Section</p>
+                  </td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                    <p style="margin: 0; font-size: 15px; color: #0f172a; font-weight: 600;">{{SECTION_LABEL}}</p>
+                  </td>
+                </tr>
+                <!-- Max Marks -->
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                    <p style="margin: 0; font-size: 13px; color: #64748b; font-weight: 700;">Max Marks</p>
+                  </td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                    <p style="margin: 0; font-size: 15px; color: #0f172a; font-weight: 600;">{{MAX_MARKS}}</p>
+                  </td>
+                </tr>
+                <!-- Faculty -->
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                    <p style="margin: 0; font-size: 13px; color: #64748b; font-weight: 700;">Posted By</p>
+                  </td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                    <p style="margin: 0; font-size: 15px; color: #0f172a; font-weight: 600;">{{FACULTY_NAME}}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Deadline Highlight -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
+                <tr>
+                  <td style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 16px 20px; text-align: center;">
+                    <p style="margin: 0 0 4px; font-size: 12px; color: #92400e; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">⏰ Submission Deadline</p>
+                    <p style="margin: 0; font-size: 20px; color: #92400e; font-weight: 800;">
+                      {{DEADLINE}}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Description (conditional) -->
+              {{DESCRIPTION_BLOCK}}
+
+              <!-- CTA Button -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 28px 0;">
+                <tr>
+                  <td align="center">
+                    <a href="{{DASHBOARD_URL}}"
+                       style="display: inline-block; background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: #ffffff; text-decoration: none; padding: 14px 36px; border-radius: 10px; font-size: 16px; font-weight: 700; letter-spacing: 0.02em;">
+                      View Assignment →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f8fafc; padding: 24px 40px; text-align: center; border-top: 1px solid #e2e8f0;">
+              <p style="margin: 0 0 6px; font-size: 13px; color: #94a3b8;">
+                This is an automated notification from <strong style="color: #64748b;">AssignFlow</strong>.
+              </p>
+              <p style="margin: 0; font-size: 12px; color: #cbd5e1;">
+                © 2026 IILM University. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- /Card -->
+
+      </td>
+    </tr>
+  </table>
+  <!-- /Wrapper -->
+
+</body>
+</html>
