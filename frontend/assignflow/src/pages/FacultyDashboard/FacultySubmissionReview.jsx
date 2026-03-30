@@ -12,11 +12,11 @@ import {
   Edit2,
   CheckCircle,
   XCircle,
-  Save,
   Loader
 } from 'lucide-react';
 import api from '../../api/axiosConfig';
 import styles from './FacultySubmissionReview.module.css';
+import SubmissionReviewModal from './components/SubmissionReviewModal';
 
 const FacultySubmissionReview = () => {
   const { id } = useParams();
@@ -30,8 +30,7 @@ const FacultySubmissionReview = () => {
   const [successMsg, setSuccessMsg] = useState(null);
 
   // Evaluation states
-  const [editModeId, setEditModeId] = useState(null);
-  const [evalData, setEvalData] = useState({ marks_obtained: '', feedback: '', status: 'pending' });
+  const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [savingId, setSavingId] = useState(null);
 
   useEffect(() => {
@@ -79,36 +78,36 @@ const FacultySubmissionReview = () => {
   };
 
   const handleEditClick = (sub) => {
-    setEditModeId(sub.id);
-    setEvalData({
-      marks_obtained: sub.marks_obtained !== null && sub.marks_obtained !== undefined ? sub.marks_obtained : '',
-      feedback: sub.feedback || '',
-      status: sub.status || 'pending'
-    });
+    setSelectedSubmission(sub);
   };
 
-  const handleCancelEdit = () => {
-    setEditModeId(null);
+  const handleCloseModal = () => {
+    setSelectedSubmission(null);
+    setSuccessMsg(null);
+    setError(null);
   };
 
-  const handleSaveEvaluation = async (subId) => {
+  const handleSaveEvaluation = async (subId, newEvalData) => {
     try {
       setSavingId(subId);
       setError(null);
       setSuccessMsg(null);
 
       const payload = {
-        marks_obtained: evalData.marks_obtained === '' ? null : Number(evalData.marks_obtained),
-        feedback: evalData.feedback,
-        status: evalData.status
+        marks_obtained: newEvalData.marks_obtained,
+        feedback: newEvalData.feedback,
+        status: newEvalData.status
       };
 
       const res = await api.put(`/faculty/submissions/${subId}/evaluate`, payload);
 
-      setSubmissions((prev) => prev.map((s) => (s.id === subId ? { ...s, ...res.data } : s)));
-      setEditModeId(null);
       setSuccessMsg('Evaluation saved successfully!');
-      setTimeout(() => setSuccessMsg(null), 3000);
+      
+      // Close modal gracefully after success
+      setTimeout(() => {
+        setSuccessMsg(null);
+        setSelectedSubmission(null);
+      }, 1500);
     } catch (err) {
       console.error('Save failed:', err);
       setError(err.response?.data?.detail || 'Failed to save evaluation.');
@@ -211,11 +210,8 @@ const FacultySubmissionReview = () => {
               <tbody>
                 {filteredSubmissions.length > 0 ? (
                   filteredSubmissions.map((sub) => {
-                    const isEditing = editModeId === sub.id;
-                    const isSaving = savingId === sub.id;
-
                     return (
-                    <tr key={sub.id} className={isEditing ? styles.editingRow : ''}>
+                    <tr key={sub.id}>
                       <td>
                         <div className={styles.studentInfo}>
                           <div className={styles.studentAvatar}>
@@ -255,85 +251,27 @@ const FacultySubmissionReview = () => {
                         </div>
                       </td>
                       <td className={styles.evaluationCell}>
-                        {isEditing ? (
-                          <div className={styles.evalFormDesk}>
-                            <div className={styles.evalInputGroup}>
-                              <label>Marks</label>
-                              <input 
-                                type="number" 
-                                min="0" 
-                                max="100" 
-                                className={styles.evalInput}
-                                value={evalData.marks_obtained}
-                                onChange={(e) => setEvalData({...evalData, marks_obtained: e.target.value})}
-                              />
-                            </div>
-                            <div className={styles.evalInputGroup}>
-                              <label>Status</label>
-                              <select 
-                                className={styles.evalSelect}
-                                value={evalData.status}
-                                onChange={(e) => setEvalData({...evalData, status: e.target.value})}
-                              >
-                                <option value="pending">Pending</option>
-                                <option value="reviewed">Reviewed</option>
-                                <option value="late">Late</option>
-                              </select>
-                            </div>
-                            <div className={styles.evalInputGroupFull}>
-                              <label>Feedback</label>
-                              <textarea 
-                                className={styles.evalTextarea}
-                                placeholder="Add comments..."
-                                value={evalData.feedback}
-                                onChange={(e) => setEvalData({...evalData, feedback: e.target.value})}
-                              ></textarea>
-                            </div>
+                        <div className={styles.evalDisplay}>
+                          <div className={styles.evalTop}>
+                            <span className={`${styles.statusBadge} ${getStatusClass(sub.status)}`}>
+                              {sub.status || 'Pending'}
+                            </span>
+                            {sub.marks_obtained !== null && sub.marks_obtained !== undefined && (
+                              <span className={styles.marksBadge}>{sub.marks_obtained} Pts</span>
+                            )}
                           </div>
-                        ) : (
-                          <div className={styles.evalDisplay}>
-                            <div className={styles.evalTop}>
-                              <span className={`${styles.statusBadge} ${getStatusClass(sub.status)}`}>
-                                {sub.status || 'Pending'}
-                              </span>
-                              {sub.marks_obtained !== null && sub.marks_obtained !== undefined && (
-                                <span className={styles.marksBadge}>{sub.marks_obtained} Pts</span>
-                              )}
-                            </div>
-                            {sub.feedback && <div className={styles.feedbackText}>"{sub.feedback}"</div>}
-                          </div>
-                        )}
+                          {sub.feedback && <div className={styles.feedbackText}>"{sub.feedback}"</div>}
+                        </div>
                       </td>
                       <td>
                         <div className={styles.actions}>
-                          {isEditing ? (
-                            <>
-                              <button 
-                                onClick={() => handleSaveEvaluation(sub.id)} 
-                                className={`${styles.actionBtn} ${styles.saveBtn}`}
-                                disabled={isSaving}
-                              >
-                                {isSaving ? <Loader size={18} className={styles.spin} /> : <Save size={18} />}
-                                <span>Save</span>
-                              </button>
-                              <button 
-                                onClick={handleCancelEdit} 
-                                className={`${styles.actionBtn} ${styles.cancelBtn}`}
-                                disabled={isSaving}
-                              >
-                                <XCircle size={18} />
-                                <span>Cancel</span>
-                              </button>
-                            </>
-                          ) : (
-                            <button 
-                              onClick={() => handleEditClick(sub)} 
-                              className={`${styles.actionBtn} ${styles.editBtn}`}
-                            >
-                              <Edit2 size={18} />
-                              <span>Evaluate</span>
-                            </button>
-                          )}
+                          <button 
+                            onClick={() => handleEditClick(sub)} 
+                            className={`${styles.actionBtn} ${styles.editBtn}`}
+                          >
+                            <Edit2 size={18} />
+                            <span>Evaluate</span>
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -354,11 +292,8 @@ const FacultySubmissionReview = () => {
           <div className={styles.mobileCardsList}>
             {filteredSubmissions.length > 0 ? (
               filteredSubmissions.map((sub) => {
-                const isEditing = editModeId === sub.id;
-                const isSaving = savingId === sub.id;
-
                 return (
-                <div key={sub.id} className={`glass-card ${styles.mobileCard} ${isEditing ? styles.editingCard : ''}`}>
+                <div key={sub.id} className={`glass-card ${styles.mobileCard}`}>
                   <div className={styles.mCardHeader}>
                     <div className={styles.studentName}>{sub.student_name}</div>
                     <span className={`${styles.statusBadge} ${getStatusClass(sub.status)}`}>
@@ -385,98 +320,28 @@ const FacultySubmissionReview = () => {
                     </div>
                   </div>
 
-                  {!isEditing && (
-                    <div className={styles.mEvalBody}>
-                      {sub.marks_obtained !== null && sub.marks_obtained !== undefined ? (
-                        <div className={styles.mMarksRow}>
-                          <span className={styles.mLabel}>Marks:</span>
-                          <span className={styles.marksBadge}>{sub.marks_obtained}</span>
-                        </div>
-                      ) : null}
-                      {sub.feedback && (
-                        <div className={styles.mFeedbackRow}>
-                          <span className={styles.mLabel}>Feedback:</span>
-                          <p className={styles.mFeedbackText}>"{sub.feedback}"</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {isEditing && (
-                    <div className={styles.mEditSection}>
-                      <div className={styles.mEditRow}>
-                        <div className={styles.evalInputGroup}>
-                          <label>Marks</label>
-                          <input 
-                            type="number" 
-                            className={styles.evalInput}
-                            value={evalData.marks_obtained}
-                            onChange={(e) => setEvalData({...evalData, marks_obtained: e.target.value})}
-                          />
-                        </div>
-                        <div className={styles.evalInputGroup}>
-                          <label>Status</label>
-                          <select 
-                            className={styles.evalSelect}
-                            value={evalData.status}
-                            onChange={(e) => setEvalData({...evalData, status: e.target.value})}
-                          >
-                            <option value="pending">Pending</option>
-                            <option value="reviewed">Reviewed</option>
-                            <option value="late">Late</option>
-                          </select>
-                        </div>
+                  <div className={styles.mEvalBody}>
+                    {sub.marks_obtained !== null && sub.marks_obtained !== undefined ? (
+                      <div className={styles.mMarksRow}>
+                        <span className={styles.mLabel}>Marks:</span>
+                        <span className={styles.marksBadge}>{sub.marks_obtained}</span>
                       </div>
-                      <div className={styles.evalInputGroupFull}>
-                        <label>Feedback</label>
-                        <textarea 
-                          className={styles.evalTextarea}
-                          rows="3"
-                          value={evalData.feedback}
-                          onChange={(e) => setEvalData({...evalData, feedback: e.target.value})}
-                        ></textarea>
+                    ) : null}
+                    {sub.feedback && (
+                      <div className={styles.mFeedbackRow}>
+                        <span className={styles.mLabel}>Feedback:</span>
+                        <p className={styles.mFeedbackText}>"{sub.feedback}"</p>
                       </div>
-                    </div>
-                  )}
-
-                  
-                  <div className={styles.mCardFooter}>
-                    <a
-                      href={sub.file_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`btn-outline ${styles.mFullBtn}`}
-                    >
-                      <Download size={18} /> Document
-                    </a>
+                    )}
                   </div>
 
                   <div className={styles.mCardActions}>
-                    {isEditing ? (
-                      <div className={styles.mActionButtons}>
-                        <button 
-                          onClick={handleCancelEdit}
-                          className={`btn-secondary ${styles.mCancelBtn}`}
-                          disabled={isSaving}
-                        >
-                          Cancel
-                        </button>
-                        <button 
-                          onClick={() => handleSaveEvaluation(sub.id)}
-                          className={`btn-primary ${styles.mSaveBtn}`}
-                          disabled={isSaving}
-                        >
-                          {isSaving ? 'Saving...' : 'Save Evaluation'}
-                        </button>
-                      </div>
-                    ) : (
-                      <button 
-                        onClick={() => handleEditClick(sub)}
-                        className={`btn-primary ${styles.mFullBtn} ${styles.mEvalBtn}`}
-                      >
-                        <Edit2 size={18} /> Evaluate
-                      </button>
-                    )}
+                    <button 
+                      onClick={() => handleEditClick(sub)}
+                      className={`btn-primary ${styles.mFullBtn} ${styles.mEvalBtn}`}
+                    >
+                      <Edit2 size={18} /> Open Evaluation Modal
+                    </button>
                   </div>
                 </div>
                 );
@@ -486,6 +351,18 @@ const FacultySubmissionReview = () => {
             )}
           </div>
         </>
+      )}
+
+      {selectedSubmission && (
+        <SubmissionReviewModal
+          submission={selectedSubmission}
+          assignment={assignment}
+          onClose={handleCloseModal}
+          onSave={handleSaveEvaluation}
+          isSaving={savingId === selectedSubmission.id}
+          successMsg={successMsg}
+          errorMsg={error}
+        />
       )}
     </div>
   );
